@@ -52,6 +52,7 @@ aws_baseline_s3_airflow = {
 aws_baseline_eks = {
   cluster_endpoint_private_access    = true
   cluster_endpoint_public_access     = true
+  write_kubeconfig                   = false
   cluster_enabled_log_types          = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
   worker_groups_name                 = "worker-group-1"
   worker_groups_instance_type        = "t3.medium"

@@ -72,9 +72,9 @@ data "aws_iam_policy_document" "aws_baseline_kms_document" {
 }
 
 module "aws_baseline_kms" {
-    source      = "clouddrove/kms/aws"
-    version     = "0.15.0"
-    
+  source  = "clouddrove/kms/aws"
+  version = "0.15.0"
+
   deletion_window_in_days = var.aws_baseline_kms.deletion_window_in_days
   description             = var.aws_baseline_kms.description
   enable_key_rotation     = var.aws_baseline_kms.enable_key_rotation
