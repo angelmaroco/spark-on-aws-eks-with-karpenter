@@ -9,7 +9,7 @@ data "local_file" "helm_chart_grafana" {
 }
 
 data "template_file" "file" {
-  template = "${file("${path.module}/templates/prometheus.yaml")}"
+  template = file("${path.module}/templates/prometheus.yaml")
 }
 
 data "local_file" "helm_chart_dashboard" {

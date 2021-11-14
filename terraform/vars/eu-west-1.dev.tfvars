@@ -60,7 +60,19 @@ aws_baseline_eks = {
   worker_groups_asg_desired_capacity = 2
   worker_groups_asg_max_size         = 5
   worker_groups_asg_min_size         = 2
+}
 
+aws_baseline_s3_spark = {
+  block_public_acls       = true
+  block_public_policy     = true
+  bucket_name             = "spark-on-aws-eks"
+  create_s3_bucket        = true
+  force_destroy           = true
+  restrict_public_buckets = true
+  sse_algorithm           = "AES256"
+  sse_prevent             = false
+  versioning              = true
+  spark_ui_path           = "spark-ui/"
 }
 
 aws_baseline_airflow = {

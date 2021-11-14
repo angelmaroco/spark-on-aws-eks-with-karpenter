@@ -15,6 +15,10 @@ variable "aws_baseline_s3_airflow" {
   type = any
 }
 
+variable "aws_baseline_s3_spark" {
+  type = any
+}
+
 variable "aws_baseline_eks" {
   type = any
 }

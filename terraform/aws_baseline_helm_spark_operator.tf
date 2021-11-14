@@ -18,12 +18,12 @@ resource "helm_release" "spark-operator" {
   set {
     name  = "webhook.enable"
     value = "true"
-  }  
+  }
 
   set {
     name  = "enable-metrics"
     value = "true"
-  }    
+  }
 }
 
 resource "kubernetes_service_account" "spark-service-account" {
@@ -34,7 +34,7 @@ resource "kubernetes_service_account" "spark-service-account" {
 
 resource "kubernetes_cluster_role_binding" "spark-cluster-role-binding" {
   metadata {
-    name      = "spark-cluster-role-binding"
+    name = "spark-cluster-role-binding"
   }
   role_ref {
     api_group = "rbac.authorization.k8s.io"

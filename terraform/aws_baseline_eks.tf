@@ -27,6 +27,8 @@ module "eks" {
 
   worker_additional_security_group_ids = [module.sg_eks_worker_group_all.this_security_group_id]
 
+  workers_additional_policies = ["arn:aws:iam::aws:policy/AmazonS3FullAccess"]
+
   worker_groups = [
     {
       name                          = var.aws_baseline_eks.worker_groups_name
