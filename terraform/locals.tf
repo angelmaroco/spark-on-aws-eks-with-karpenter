@@ -1,0 +1,10 @@
+locals {
+  name            = "eks-cluster-${var.tags.project}-${var.tags.environment}"
+  cluster_version = "1.21"
+  region          = "eu-west-1"
+}
+
+resource "random_string" "suffix" {
+  length  = 8
+  special = false
+}

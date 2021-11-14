@@ -1,0 +1,248 @@
+module "aws_baseline_s3_airflow" {
+  source  = "cloudposse/s3-bucket/aws"
+  version = "0.44.0"
+
+  block_public_acls       = var.aws_baseline_s3_airflow.block_public_acls
+  block_public_policy     = var.aws_baseline_s3_airflow.block_public_policy
+  bucket_name             = var.aws_baseline_s3_airflow.bucket_name
+  enabled                 = var.aws_baseline_s3_airflow.create_s3_bucket
+  force_destroy           = var.aws_baseline_s3_airflow.force_destroy
+  restrict_public_buckets = var.aws_baseline_s3_airflow.restrict_public_buckets
+  sse_algorithm           = var.aws_baseline_s3_airflow.sse_algorithm
+  versioning_enabled      = var.aws_baseline_s3_airflow.versioning
+  tags                    = var.tags
+}
+
+resource "aws_s3_bucket_object" "path_dags" {
+  bucket = module.aws_baseline_s3_airflow.bucket_id
+  acl    = "private"
+  key    = var.aws_baseline_airflow.dag_s3_path
+  source = "/dev/null"
+}
+
+resource "aws_s3_bucket_object" "path_plugins" {
+  bucket = module.aws_baseline_s3_airflow.bucket_id
+  acl    = "private"
+  key    = var.aws_baseline_airflow.plugins_s3_path
+  source = "resources/airflow/plugins/plugins.zip"
+  etag   = filemd5("resources/airflow/plugins/plugins.zip")
+}
+
+resource "aws_s3_bucket_object" "path_requeriments" {
+  bucket = module.aws_baseline_s3_airflow.bucket_id
+  acl    = "private"
+  key    = var.aws_baseline_airflow.requirements_s3_path
+  source = "resources/airflow/plugins/plugins.zip"
+  etag   = filemd5("resources/airflow/requirements.txt")
+}
+
+resource "aws_iam_role" "mwaa-execution" {
+  name = "AmazonMWAA-${var.aws_baseline_airflow.name}"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": [
+          "airflow.amazonaws.com",
+          "airflow-env.amazonaws.com"
+        ]
+      },
+      "Effect": "Allow",
+      "Sid": ""
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy" "mwaa-exec-policy" {
+  name = "MWAA-Execution-Policy-${var.aws_baseline_airflow.name}"
+  role = aws_iam_role.mwaa-execution.id
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "airflow:PublishMetrics",
+      "Resource": "arn:aws:airflow:${var.tags.region}:${var.tags.account}:environment/${var.aws_baseline_airflow.name}"
+    },
+    { 
+      "Effect": "Deny",
+      "Action": [ 
+        "s3:ListAllMyBuckets"
+      ],
+      "Resource": [
+        "${module.aws_baseline_s3_airflow.bucket_arn}",
+        "${module.aws_baseline_s3_airflow.bucket_arn}/*"
+      ]
+    },
+    { 
+      "Effect": "Allow",
+      "Action": [ 
+        "s3:GetObject*",
+        "s3:GetBucket*",
+        "s3:List*"
+      ],
+      "Resource": [
+        "${module.aws_baseline_s3_airflow.bucket_arn}",
+        "${module.aws_baseline_s3_airflow.bucket_arn}/*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogStream",
+        "logs:CreateLogGroup",
+        "logs:PutLogEvents",
+        "logs:GetLogEvents",
+        "logs:GetLogRecord",
+        "logs:GetLogGroupFields",
+        "logs:GetQueryResults"
+      ],
+      "Resource": [
+        "arn:aws:logs:${var.tags.region}:${var.tags.account}:log-group:airflow-${var.aws_baseline_airflow.name}-*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "logs:DescribeLogGroups"
+      ],
+      "Resource": [
+        "*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": "cloudwatch:PutMetricData",
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "sqs:ChangeMessageVisibility",
+        "sqs:DeleteMessage",
+        "sqs:GetQueueAttributes",
+        "sqs:GetQueueUrl",
+        "sqs:ReceiveMessage",
+        "sqs:SendMessage"
+      ],
+      "Resource": "arn:aws:sqs:${var.tags.region}:*:airflow-celery-*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "kms:Decrypt",
+        "kms:DescribeKey",
+        "kms:GenerateDataKey*",
+        "kms:Encrypt"
+      ],
+      "NotResource": "arn:aws:kms:*:${var.tags.account}:key/*",
+      "Condition": {
+        "StringLike": {
+          "kms:ViaService": [
+            "sqs.${var.tags.region}.amazonaws.com"
+          ]
+        }
+      }
+    }
+  ]
+}
+EOF
+}
+
+# ----------------------------------------------------------------------------------------
+# CREATE A SECURITY GROUP TO CONTROL WHAT REQUESTS CAN GO IN AND OUT OF EACH EC2 INSTANCE
+# ----------------------------------------------------------------------------------------
+
+module "sg_airflow" {
+  source              = "terraform-aws-modules/security-group/aws"
+  version             = "3.2.0"
+  name                = "sg_airflow"
+  description         = "Security group"
+  vpc_id              = module.aws_baseline_vpc.vpc_id
+  ingress_cidr_blocks = ["0.0.0.0/0"]
+  
+  ingress_with_cidr_blocks = [
+    {
+      description = "Airflow webserver"
+      from_port   = 8080
+      to_port     = 8080
+      protocol    = "tcp"
+      cidr_blocks = "0.0.0.0/0"
+    },
+    {
+      description = "Airflow flower"
+      from_port   = 5555
+      to_port     = 5555
+      protocol    = "tcp"
+      cidr_blocks = "0.0.0.0/0"
+    },
+  ]
+  egress_rules = ["all-all"]
+  tags         = var.tags
+}
+
+
+resource "aws_mwaa_environment" "this" {
+  count             = var.aws_baseline_airflow.enabled ? 1 : 0
+  name              = "${var.aws_baseline_airflow.name}-${var.tags.environment}-${random_string.suffix.result}"
+  max_workers       = var.aws_baseline_airflow.max_workers
+  min_workers       = var.aws_baseline_airflow.min_workers
+  environment_class = var.aws_baseline_airflow.environment_class
+  airflow_version   = var.aws_baseline_airflow.airflow_version
+
+  airflow_configuration_options = var.aws_baseline_airflow.airflow_configuration_options
+
+  dag_s3_path                    = var.aws_baseline_airflow.dag_s3_path
+  plugins_s3_path                = var.aws_baseline_airflow.plugins_s3_path
+  plugins_s3_object_version      = var.aws_baseline_airflow.plugins_s3_object_version
+  requirements_s3_path           = var.aws_baseline_airflow.requirements_s3_path
+  requirements_s3_object_version = var.aws_baseline_airflow.requirements_s3_object_version
+
+  execution_role_arn = aws_iam_role.mwaa-execution.arn
+
+  network_configuration {
+    security_group_ids = [module.sg_airflow.this_security_group_id]
+    subnet_ids         = [module.aws_baseline_vpc.private_subnets[0], module.aws_baseline_vpc.private_subnets[1]]
+  }
+
+  source_bucket_arn = module.aws_baseline_s3_airflow.bucket_arn
+
+  logging_configuration {
+    dag_processing_logs {
+      enabled   = true
+      log_level = "DEBUG"
+    }
+
+    scheduler_logs {
+      enabled   = true
+      log_level = "INFO"
+    }
+
+    task_logs {
+      enabled   = true
+      log_level = "WARNING"
+    }
+
+    webserver_logs {
+      enabled   = true
+      log_level = "ERROR"
+    }
+
+    worker_logs {
+      enabled   = true
+      log_level = "CRITICAL"
+    }
+  }
+
+  webserver_access_mode = var.aws_baseline_airflow.webserver_access_mode
+
+  tags = var.tags
+}
