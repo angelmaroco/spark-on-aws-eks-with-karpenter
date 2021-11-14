@@ -1,10 +1,8 @@
 tags = {
-  account     = "482861842012"
   terraform   = "true"
   environment = "dev"
   project     = "spark-on-aws-eks"
   region      = "eu-west-1"
-  company     = "bluetab"
 }
 
 aws_baseline_vpc = {
