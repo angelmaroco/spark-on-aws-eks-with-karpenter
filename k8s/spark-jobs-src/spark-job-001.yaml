@@ -34,8 +34,8 @@ spec:
         mountPath: "/tmp"
   executor:
     cores: 1
-    instances: 4
-    memory: "512m"
+    instances: 10
+    memory: "1024m"
     labels:
       version: 2.4.5
     volumeMounts:

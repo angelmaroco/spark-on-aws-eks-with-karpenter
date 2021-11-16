@@ -147,7 +147,8 @@ alertmanager:
   ## Node labels for alertmanager pod assignment
   ## Ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
-  nodeSelector: {}
+  nodeSelector:
+    "node.kubernetes.io/lifecycle": "normal"
 
   ## Pod affinity
   ##

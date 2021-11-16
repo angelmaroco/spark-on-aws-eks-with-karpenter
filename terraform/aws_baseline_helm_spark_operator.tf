@@ -16,12 +16,7 @@ resource "helm_release" "spark-operator" {
   }
 
   set {
-    name  = "webhook.enable"
-    value = "true"
-  }
-
-  set {
-    name  = "enable-metrics"
+    name  = "enableWebhook"
     value = "true"
   }
 }

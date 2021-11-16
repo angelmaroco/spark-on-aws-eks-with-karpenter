@@ -35,14 +35,29 @@ resource "helm_release" "grafana" {
   values = [data.local_file.helm_chart_grafana.content]
 }
 
+resource "random_password" "grafana_password" {
+  length  = 16
+  special = false
+}
+
+resource "aws_secretsmanager_secret" "grafana_password_secret" {
+  name                    = "/grafana-${var.tags.environment}"
+  recovery_window_in_days = 0
+}
+
+resource "aws_secretsmanager_secret_version" "grafana_password_version" {
+  secret_id     = aws_secretsmanager_secret.grafana_password_secret.id
+  secret_string = random_password.grafana_password.result
+}
+
 resource "kubernetes_secret" "grafana-secrets" {
   metadata {
     name      = "grafana-credentials"
     namespace = kubernetes_namespace.monitoring.metadata.0.name
   }
   data = {
-    adminUser     = "demo"
-    adminPassword = "demo"
+    adminUser     = var.aws_baseline_monitoring.grafana_admin_user
+    adminPassword = random_password.grafana_password.result
   }
 }
 

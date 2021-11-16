@@ -26,3 +26,7 @@ variable "aws_baseline_eks" {
 variable "aws_baseline_airflow" {
   type = any
 }
+
+variable "aws_baseline_monitoring" {
+  type = any
+}

@@ -19,3 +19,10 @@ resource "aws_s3_bucket_object" "spark_ui_path" {
   key    = var.aws_baseline_s3_spark.spark_ui_path
   source = "/dev/null"
 }
+
+resource "aws_s3_bucket_object" "spark_data_path" {
+  bucket = module.aws_baseline_s3_spark.bucket_id
+  acl    = "private"
+  key    = var.aws_baseline_s3_spark.spark_data_path
+  source = "/dev/null"
+}

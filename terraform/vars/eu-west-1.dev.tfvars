@@ -50,14 +50,26 @@ aws_baseline_s3_airflow = {
 aws_baseline_eks = {
   cluster_endpoint_private_access    = true
   cluster_endpoint_public_access     = true
-  write_kubeconfig                   = false
+  enable_irsa                        = true
+  attach_worker_cni_policy           = true
   cluster_enabled_log_types          = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
-  worker_groups_name                 = "worker-group-1"
+  worker_groups_name                 = "worker-group-on-demand"
   worker_groups_instance_type        = "t3.medium"
   worker_groups_additional_userdata  = ""
-  worker_groups_asg_desired_capacity = 2
+  worker_groups_asg_desired_capacity = 3
   worker_groups_asg_max_size         = 5
-  worker_groups_asg_min_size         = 2
+  worker_groups_asg_min_size         = 3
+  worker_groups_kubelet_extra_args   = "--node-labels=node.kubernetes.io/lifecycle=normal"
+  worker_groups_suspended_processes  = ["AZRebalance"]
+
+  worker_groups_spot_name                 = "worker-group-spot"
+  worker_groups_spot_instance_type        = "t3a.medium"
+  worker_groups_spot_additional_userdata  = ""
+  worker_groups_spot_asg_desired_capacity = 0
+  worker_groups_spot_asg_max_size         = 5
+  worker_groups_spot_asg_min_size         = 0
+  worker_groups_spot_kubelet_extra_args   = "--node-labels=node.kubernetes.io/lifecycle=spot"
+  worker_groups_spot_suspended_processes  = ["AZRebalance"]
 }
 
 aws_baseline_s3_spark = {
@@ -71,6 +83,11 @@ aws_baseline_s3_spark = {
   sse_prevent             = false
   versioning              = true
   spark_ui_path           = "spark-ui/"
+  spark_data_path         = "data/"
+}
+
+aws_baseline_monitoring = {
+  grafana_admin_user = "admin"
 }
 
 aws_baseline_airflow = {
