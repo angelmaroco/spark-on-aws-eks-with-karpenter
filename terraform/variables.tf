@@ -30,3 +30,7 @@ variable "aws_baseline_airflow" {
 variable "aws_baseline_monitoring" {
   type = any
 }
+
+variable "aws_baseline_karpenter" {
+  type = any
+}

@@ -9,6 +9,7 @@ resource "helm_release" "spark-operator" {
   name       = "spark-operator"
   namespace  = kubernetes_namespace.spark-operator.metadata.0.name
   repository = "https://googlecloudplatform.github.io/spark-on-k8s-operator"
+  version    = "1.1.14"
 
   set {
     name  = "sparkJobNamespace"

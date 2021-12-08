@@ -1,7 +1,7 @@
 apiVersion: "sparkoperator.k8s.io/v1beta2"
 kind: SparkApplication
 metadata:
-  name: spark-pi-v6
+  name: spark-pi-v17
   namespace: default
 spec:
   sparkConf:
@@ -24,7 +24,7 @@ spec:
         type: Directory
   driver:
     cores: 1
-    coreLimit: "1000m"
+    coreLimit: "4000m"
     memory: "512m"
     labels:
       version: 2.4.5
@@ -34,8 +34,8 @@ spec:
         mountPath: "/tmp"
   executor:
     cores: 1
-    instances: 10
-    memory: "1024m"
+    instances: 20
+    memory: "1000m"
     labels:
       version: 2.4.5
     volumeMounts:

@@ -1,0 +1,20 @@
+apiVersion: karpenter.sh/v1alpha5
+kind: Provisioner
+metadata:
+  name: ${name_provisioner}
+spec:
+  requirements:
+    - key: "node.kubernetes.io/instance-type" 
+      operator: In
+      values: ${instanceType}
+    - key: "kubernetes.io/arch" 
+      operator: In
+      values: ${arch}
+    - key: "karpenter.sh/capacity-type"
+      operator: In
+      values: ${capacityType}
+  provider:
+    instanceProfile: ${instanceProfile}
+    subnetSelector:
+        Name: ${subnetSelector}
+  ttlSecondsAfterEmpty: ${ttlSecondsAfterEmpty}
