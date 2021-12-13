@@ -1,20 +1,20 @@
 apiVersion: karpenter.sh/v1alpha5
 kind: Provisioner
 metadata:
-  name: ${name_provisioner}
+  name: "karpenter-provisioner-low-priority"
 spec:
   requirements:
     - key: "node.kubernetes.io/instance-type" 
       operator: In
-      values: ${instanceType}
+      values: ["t3.medium", "t3.large", "t3.2xlarge", "m5.4xlarge", "m5.8xlarge"]
     - key: "kubernetes.io/arch" 
       operator: In
-      values: ${arch}
+      values: ["amd64"]
     - key: "karpenter.sh/capacity-type"
       operator: In
-      values: ${capacityType}
+      values: ["spot"]
   provider:
-    instanceProfile: ${instanceProfile}
+    instanceProfile: "KarpenterNodeInstanceProfile-cluster-spark-on-aws-eks-dev"
     subnetSelector:
-        Name: ${subnetSelector}
-  ttlSecondsAfterEmpty: ${ttlSecondsAfterEmpty}
+        Name: "*spark-on-aws-eks-dev-private*"
+  ttlSecondsAfterEmpty: 30

@@ -20,6 +20,17 @@ resource "helm_release" "spark-operator" {
     name  = "enableWebhook"
     value = "true"
   }
+
+  set {
+    name  = "enableMetrics"
+    value = "true"
+  }
+
+  set {
+    name  = "replicaCount"
+    value = "1"
+
+  }
 }
 
 resource "kubernetes_service_account" "spark-service-account" {

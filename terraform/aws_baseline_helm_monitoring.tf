@@ -16,12 +16,17 @@ data "local_file" "helm_chart_dashboard" {
   filename = "${path.module}/templates/dashboard.yaml"
 }
 
+data "local_file" "helm_chart_spark_history_server" {
+  filename = "${path.module}/templates/spark_history_server.yaml"
+}
+
 
 resource "helm_release" "prometheus" {
   chart      = "prometheus"
   name       = "prometheus"
   namespace  = kubernetes_namespace.monitoring.metadata.0.name
   repository = "https://charts.helm.sh/stable"
+  timeout    = 600
 
   values = [data.template_file.file.rendered]
 }
@@ -31,6 +36,7 @@ resource "helm_release" "grafana" {
   name       = "grafana"
   namespace  = kubernetes_namespace.monitoring.metadata.0.name
   repository = "https://charts.helm.sh/stable"
+  timeout    = 600
 
   values = [data.local_file.helm_chart_grafana.content]
 }
@@ -73,6 +79,17 @@ resource "helm_release" "kubernetes-dashboard" {
   values = [data.local_file.helm_chart_dashboard.content]
 }
 
+resource "helm_release" "spark-history-server" {
+
+  name = "spark-history-server"
+
+  repository = "https://charts.helm.sh/stable"
+  chart      = "spark-history-server"
+  namespace  = kubernetes_namespace.monitoring.metadata.0.name
+  timeout    = 600
+
+  values = [data.local_file.helm_chart_spark_history_server.content]
+}
 
 data "kubernetes_service" "grafana" {
   depends_on = [
@@ -104,5 +121,16 @@ data "kubernetes_service" "kubernetes-dashboard" {
   metadata {
     namespace = helm_release.kubernetes-dashboard.namespace
     name      = "kubernetes-dashboard"
+  }
+}
+
+data "kubernetes_service" "spark-history-server" {
+  depends_on = [
+    helm_release.spark-history-server
+  ]
+
+  metadata {
+    namespace = helm_release.spark-history-server.namespace
+    name      = "spark-history-server"
   }
 }
