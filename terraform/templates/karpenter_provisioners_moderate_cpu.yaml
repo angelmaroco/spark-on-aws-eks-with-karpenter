@@ -1,13 +1,13 @@
 apiVersion: karpenter.sh/v1alpha5
 kind: Provisioner
 metadata:
-  name: "karpenter-provisioner-low-priority"
+  name: "karpenter-provisioner-workload-moderate-cpu"
 spec:
   requirements:
     - key: "node.kubernetes.io/instance-type" 
       operator: In
-      values: ["t3.medium", "t3.large", "t3.2xlarge", "m5.4xlarge", "m5.8xlarge"]
-    - key: "kubernetes.io/arch" 
+      values: ["m5a.large", "m5a.xlarge", "m5a.2xlarge", "m5a.4xlarge", "m5.large", "m5.xlarge", "m5.2xlarge", "m5.4xlarge"]
+    - key: "kubernetes.io/arch"
       operator: In
       values: ["amd64"]
     - key: "karpenter.sh/capacity-type"
@@ -17,4 +17,7 @@ spec:
     instanceProfile: "KarpenterNodeInstanceProfile-cluster-spark-on-aws-eks-dev"
     subnetSelector:
         Name: "*spark-on-aws-eks-dev-private*"
+    securityGroupSelector:
+        Name: "cluster-spark-on-aws-eks-dev-eks_worker_sg"
   ttlSecondsAfterEmpty: 30
+  

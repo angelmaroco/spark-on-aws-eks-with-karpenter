@@ -1,0 +1,22 @@
+apiVersion: karpenter.sh/v1alpha5
+kind: Provisioner
+metadata:
+  name: "karpenter-provisioner-workload-low-cpu"
+spec:
+  requirements:
+    - key: "node.kubernetes.io/instance-type" 
+      operator: In
+      values: ["t3a.large", "t3a.xlarge", "t3a.2xlarge", "t3a.4xlarge", "t3.large", "t3.xlarge", "t3.2xlarge", "t3.4xlarge"]
+    - key: "kubernetes.io/arch"
+      operator: In
+      values: ["amd64"]
+    - key: "karpenter.sh/capacity-type"
+      operator: In
+      values: ["spot"]
+  provider:
+    instanceProfile: "KarpenterNodeInstanceProfile-cluster-spark-on-aws-eks-dev"
+    subnetSelector:
+        Name: "*spark-on-aws-eks-dev-private*"
+    securityGroupSelector:
+        Name: "cluster-spark-on-aws-eks-dev-eks_worker_sg"
+  ttlSecondsAfterEmpty: 30

@@ -6,10 +6,5 @@ nfs:
   enableExampleNFS: false
   pvName: nfs-pv
   pvcName: nfs-pvc
-s3:
-  enableS3: true
-  enableIAM: true
-  secret: aws-secrets
-  logDirectory: s3a://spark-on-aws-eks/spark-ui
 services:
-  type: ClusterIP
+  type: NodePort

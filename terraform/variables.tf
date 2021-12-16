@@ -9,12 +9,6 @@ variable "aws_baseline_vpc" {
 variable "aws_baseline_kms" {
   type = map(string)
 }
-
-
-variable "aws_baseline_s3_airflow" {
-  type = any
-}
-
 variable "aws_baseline_s3_spark" {
   type = any
 }
@@ -22,15 +16,14 @@ variable "aws_baseline_s3_spark" {
 variable "aws_baseline_eks" {
   type = any
 }
-
-variable "aws_baseline_airflow" {
-  type = any
-}
-
 variable "aws_baseline_monitoring" {
   type = any
 }
 
 variable "aws_baseline_karpenter" {
   type = any
+}
+
+variable "aws_baseline_ecr" {
+  type = map(string)
 }

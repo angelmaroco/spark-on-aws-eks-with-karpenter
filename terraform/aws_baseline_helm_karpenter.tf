@@ -1,6 +1,12 @@
+resource "kubernetes_namespace" "karpenter" {
+  metadata {
+    name = "karpenter"
+  }
+}
+
 resource "helm_release" "karpenter" {
-  namespace        = "karpenter"
-  create_namespace = true
+  namespace        = kubernetes_namespace.karpenter.metadata.0.name
+  create_namespace = false
   name             = "karpenter"
   repository       = "https://charts.karpenter.sh"
   chart            = "karpenter"
@@ -27,9 +33,19 @@ data "aws_iam_policy" "ssm_managed_instance" {
   arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
+data "aws_iam_policy" "ecr_read_only" {
+  arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+}
+
+
 resource "aws_iam_role_policy_attachment" "karpenter_ssm_policy" {
   role       = module.eks.worker_iam_role_name
   policy_arn = data.aws_iam_policy.ssm_managed_instance.arn
+}
+
+resource "aws_iam_role_policy_attachment" "karpenter_ecr_readonly" {
+  role       = module.eks.worker_iam_role_name
+  policy_arn = data.aws_iam_policy.ecr_read_only.arn
 }
 
 resource "aws_iam_instance_profile" "karpenter" {

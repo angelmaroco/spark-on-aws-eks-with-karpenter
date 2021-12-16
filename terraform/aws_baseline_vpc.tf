@@ -28,3 +28,56 @@ module "aws_baseline_vpc" {
 
   tags = var.tags
 }
+
+
+module "endpoints" {
+  source  = "terraform-aws-modules/vpc/aws//modules/vpc-endpoints"
+  version = "3.11.0"
+
+  vpc_id             = module.aws_baseline_vpc.vpc_id
+  security_group_ids = [aws_security_group.non_default.id]
+  subnet_ids         = module.aws_baseline_vpc.private_subnets
+
+  endpoints = {
+    s3 = {
+      service             = "s3"
+      private_dns_enabled = false
+      tags                = { Name = "${var.tags.project}-${var.tags.environment}-s3-vpc-endpoint" }
+    },
+    ecr_api = {
+      service             = "ecr.api"
+      private_dns_enabled = true
+      subnet_ids          = module.aws_baseline_vpc.private_subnets
+      tags                = { Name = "${var.tags.project}-${var.tags.environment}-ecr-api-vpc-endpoint" }
+    },
+    ecr_dkr = {
+      service             = "ecr.dkr"
+      private_dns_enabled = true
+      subnet_ids          = module.aws_baseline_vpc.private_subnets
+      tags                = { Name = "${var.tags.project}-${var.tags.environment}-ecr-dkr-vpc-endpoint" }
+    }
+  }
+
+  depends_on = [aws_security_group.non_default]
+
+  tags = var.tags
+}
+
+resource "aws_security_group" "non_default" {
+  vpc_id = module.aws_baseline_vpc.vpc_id
+  name   = "VPC-ENDPOINT-SG"
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = [var.aws_baseline_vpc.cidr]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = -1
+    cidr_blocks = [var.aws_baseline_vpc.cidr]
+  }
+}

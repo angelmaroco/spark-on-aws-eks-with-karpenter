@@ -9,8 +9,8 @@ aws_baseline_vpc = {
   vpc_name                         = "spark-on-aws-eks"
   cidr                             = "10.1.0.0/16"
   azs                              = ["eu-west-1a", "eu-west-1b", "eu-west-1c"]
-  private_subnets                  = ["10.1.1.0/24", "10.1.2.0/24", "10.1.3.0/24"]
-  public_subnets                   = ["10.1.101.0/24", "10.1.102.0/24", "10.1.103.0/24"]
+  private_subnets                  = ["10.1.0.0/20", "10.1.16.0/20", "10.1.32.0/20"]
+  public_subnets                   = ["10.1.48.0/20", "10.1.64.0/20", "10.1.80.0/20"]
   enable_nat_gateway               = true
   single_nat_gateway               = true
   one_nat_gateway_per_az           = false
@@ -34,19 +34,6 @@ aws_baseline_kms = {
   key_usage               = "ENCRYPT_DECRYPT"
   name                    = "s3-logging"
 }
-
-aws_baseline_s3_airflow = {
-  block_public_acls       = true
-  block_public_policy     = true
-  bucket_name             = "airflow"
-  create_s3_bucket        = true
-  force_destroy           = true
-  restrict_public_buckets = true
-  sse_algorithm           = "AES256"
-  sse_prevent             = false
-  versioning              = true
-}
-
 aws_baseline_eks = {
   cluster_endpoint_private_access    = true
   cluster_endpoint_public_access     = true
@@ -89,37 +76,6 @@ aws_baseline_s3_spark = {
 aws_baseline_monitoring = {
   grafana_admin_user = "admin"
 }
-
-aws_baseline_airflow = {
-  enabled                        = true
-  name                           = "mwaa-cluster-"
-  max_workers                    = "2"
-  min_workers                    = "1"
-  environment_class              = "mw1.small"
-  airflow_version                = "2.0.2"
-  dag_s3_path                    = "dags/"
-  plugins_s3_path                = "plugins/plugins.zip"
-  plugins_s3_object_version      = ""
-  requirements_s3_path           = "requeriments.txt"
-  requirements_s3_object_version = ""
-
-  airflow_configuration_options = {
-    "core.default_task_retries" = 16
-    "core.parallelism"          = 1
-  }
-
-  dag_processing_logs_enabled = true
-  dag_processing_logs_level   = "DEBUG"
-
-  scheduler_logs = true
-  task_logs      = true
-  webserver_logs = true
-  worker_logs    = true
-
-  webserver_access_mode = "PUBLIC_ONLY"
-}
-
-
 aws_baseline_karpenter = {
   provisioner_low_priority_name            = "karpenter-provisioner-low-priority"
   provisioner_low_priority_instance_type   = ["t3.medium", "t3.large", "t3.2xlarge", "m5.4xlarge", "m5.8xlarge"]
@@ -134,4 +90,9 @@ aws_baseline_karpenter = {
   provisioner_high_priority_capacity_type   = ["on-demand", "spot"]
   provisioner_high_priority_subnet_selector = "private"
   provisioner_high_priority_ttl_second      = 60
+}
+
+aws_baseline_ecr = {
+  name                 = "spark-3.1.1-custom"
+  image_tag_mutability = "MUTABLE"
 }

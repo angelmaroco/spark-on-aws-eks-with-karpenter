@@ -89,6 +89,25 @@ resource "helm_release" "spark-history-server" {
   timeout    = 600
 
   values = [data.local_file.helm_chart_spark_history_server.content]
+
+  set {
+    name  = "s3.enableS3"
+    value = "true"
+  }
+  set {
+    name  = "s3.enableIAM"
+    value = "true"
+  }
+
+  set {
+    name  = "s3.secret"
+    value = "aws-secrets"
+  }
+
+  set {
+    name  = "s3.logDirectory"
+    value = "s3a://${var.aws_baseline_s3_spark.bucket_name}/${var.aws_baseline_s3_spark.spark_ui_path}"
+  }
 }
 
 data "kubernetes_service" "grafana" {
