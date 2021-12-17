@@ -4,7 +4,7 @@ metadata:
   name: "karpenter-provisioner-workload-intensive-cpu"
 spec:
   requirements:
-    - key: "node.kubernetes.io/instance-type" 
+    - key: "node.kubernetes.io/instance-type"
       operator: In
       values: ["c5a.large", "c5a.xlarge", "c5a.2xlarge", "c5a.4xlarge", "c5.large", "c5.xlarge", "c5.2xlarge", "c5.4xlarge", "c4.large", "c4.xlarge", "c4.2xlarge", "c4.4xlarge"]
     - key: "kubernetes.io/arch"
@@ -20,4 +20,3 @@ spec:
     securityGroupSelector:
         Name: "cluster-spark-on-aws-eks-dev-eks_worker_sg"
   ttlSecondsAfterEmpty: 30
-  

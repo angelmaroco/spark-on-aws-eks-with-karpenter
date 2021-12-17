@@ -1,27 +1,3 @@
-## Introducción
-
-
-## Diagrama de Arquitectura
-
-
-## Requisitos
-
-- Terraform >= 0.15
-
-
-## Despliegue infraestructura
-
-```bash
-export AWS_ACCESS_KEY_ID=XXXX
-export AWS_SECRET_ACCESS_KEY=XXXX
-export AWS_DEFAULT_REGION=eu-west-1
-export BACKEND_S3="euw1-bluetab-general-tfstate-pro"
-
-# Despliegue entorno producción
-terraform init -backend-config="bucket=${BACKEND_S3}"
-terraform apply -var-file=vars/${AWS_DEFAULT_REGION}.dev.tfvars
-```
-
 ## Requirements
 
 | Name | Version |
@@ -50,6 +26,7 @@ terraform apply -var-file=vars/${AWS_DEFAULT_REGION}.dev.tfvars
 | <a name="module_aws_baseline_s3_spark"></a> [aws\_baseline\_s3\_spark](#module\_aws\_baseline\_s3\_spark) | cloudposse/s3-bucket/aws | 0.44.0 |
 | <a name="module_aws_baseline_vpc"></a> [aws\_baseline\_vpc](#module\_aws\_baseline\_vpc) | terraform-aws-modules/vpc/aws | ~> 3.0 |
 | <a name="module_eks"></a> [eks](#module\_eks) | terraform-aws-modules/eks/aws | 17.23.0 |
+| <a name="module_endpoints"></a> [endpoints](#module\_endpoints) | terraform-aws-modules/vpc/aws//modules/vpc-endpoints | 3.11.0 |
 | <a name="module_iam_assumable_role_karpenter"></a> [iam\_assumable\_role\_karpenter](#module\_iam\_assumable\_role\_karpenter) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | 4.7.0 |
 | <a name="module_sg_eks_worker_group_all"></a> [sg\_eks\_worker\_group\_all](#module\_sg\_eks\_worker\_group\_all) | terraform-aws-modules/security-group/aws | 3.2.0 |
 | <a name="module_sg_eks_worker_group_on_demand"></a> [sg\_eks\_worker\_group\_on\_demand](#module\_sg\_eks\_worker\_group\_on\_demand) | terraform-aws-modules/security-group/aws | 3.2.0 |
@@ -59,13 +36,17 @@ terraform apply -var-file=vars/${AWS_DEFAULT_REGION}.dev.tfvars
 
 | Name | Type |
 |------|------|
+| [aws_ecr_repository.spark-custom](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecr_repository) | resource |
+| [aws_ecr_repository_policy.spark-custom-policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecr_repository_policy) | resource |
 | [aws_iam_instance_profile.karpenter](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_instance_profile) | resource |
 | [aws_iam_role_policy.karpenter_contoller](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
+| [aws_iam_role_policy_attachment.karpenter_ecr_readonly](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_iam_role_policy_attachment.karpenter_ssm_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_s3_bucket_object.spark_data_path](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_object) | resource |
 | [aws_s3_bucket_object.spark_ui_path](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_object) | resource |
 | [aws_secretsmanager_secret.grafana_password_secret](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/secretsmanager_secret) | resource |
 | [aws_secretsmanager_secret_version.grafana_password_version](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/secretsmanager_secret_version) | resource |
+| [aws_security_group.non_default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
 | [helm_release.grafana](https://registry.terraform.io/providers/hashicorp/helm/2.4.1/docs/resources/release) | resource |
 | [helm_release.karpenter](https://registry.terraform.io/providers/hashicorp/helm/2.4.1/docs/resources/release) | resource |
 | [helm_release.kubernetes-dashboard](https://registry.terraform.io/providers/hashicorp/helm/2.4.1/docs/resources/release) | resource |
@@ -73,6 +54,7 @@ terraform apply -var-file=vars/${AWS_DEFAULT_REGION}.dev.tfvars
 | [helm_release.spark-history-server](https://registry.terraform.io/providers/hashicorp/helm/2.4.1/docs/resources/release) | resource |
 | [helm_release.spark-operator](https://registry.terraform.io/providers/hashicorp/helm/2.4.1/docs/resources/release) | resource |
 | [kubernetes_cluster_role_binding.spark-cluster-role-binding](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/cluster_role_binding) | resource |
+| [kubernetes_namespace.karpenter](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
 | [kubernetes_namespace.monitoring](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
 | [kubernetes_namespace.spark-operator](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
 | [kubernetes_secret.grafana-secrets](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret) | resource |
@@ -83,6 +65,7 @@ terraform apply -var-file=vars/${AWS_DEFAULT_REGION}.dev.tfvars
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 | [aws_eks_cluster.cluster](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/eks_cluster) | data source |
 | [aws_eks_cluster_auth.cluster](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/eks_cluster_auth) | data source |
+| [aws_iam_policy.ecr_read_only](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy) | data source |
 | [aws_iam_policy.ssm_managed_instance](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy) | data source |
 | [aws_iam_policy_document.aws_baseline_kms_document](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
@@ -99,12 +82,11 @@ terraform apply -var-file=vars/${AWS_DEFAULT_REGION}.dev.tfvars
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_aws_baseline_airflow"></a> [aws\_baseline\_airflow](#input\_aws\_baseline\_airflow) | n/a | `any` | n/a | yes |
+| <a name="input_aws_baseline_ecr"></a> [aws\_baseline\_ecr](#input\_aws\_baseline\_ecr) | n/a | `map(string)` | n/a | yes |
 | <a name="input_aws_baseline_eks"></a> [aws\_baseline\_eks](#input\_aws\_baseline\_eks) | n/a | `any` | n/a | yes |
 | <a name="input_aws_baseline_karpenter"></a> [aws\_baseline\_karpenter](#input\_aws\_baseline\_karpenter) | n/a | `any` | n/a | yes |
 | <a name="input_aws_baseline_kms"></a> [aws\_baseline\_kms](#input\_aws\_baseline\_kms) | n/a | `map(string)` | n/a | yes |
 | <a name="input_aws_baseline_monitoring"></a> [aws\_baseline\_monitoring](#input\_aws\_baseline\_monitoring) | n/a | `any` | n/a | yes |
-| <a name="input_aws_baseline_s3_airflow"></a> [aws\_baseline\_s3\_airflow](#input\_aws\_baseline\_s3\_airflow) | n/a | `any` | n/a | yes |
 | <a name="input_aws_baseline_s3_spark"></a> [aws\_baseline\_s3\_spark](#input\_aws\_baseline\_s3\_spark) | n/a | `any` | n/a | yes |
 | <a name="input_aws_baseline_vpc"></a> [aws\_baseline\_vpc](#input\_aws\_baseline\_vpc) | n/a | `any` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | n/a | `map(string)` | n/a | yes |
