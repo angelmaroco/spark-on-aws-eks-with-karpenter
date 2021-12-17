@@ -1,22 +1,38 @@
 #!/bin/bash
 
-NUM_JOBS=2
+############################################################
+# Build spark image and push to ECR                        #
+############################################################
+
+usage() { echo "Usage: $0 -a <AWS_ACCOUNT (123456789012)> -r <AWS_REGION (eu-west-1)> -n <NUM_SPARK_JOBS (10)>" 1>&2; exit 1; }
+
+while getopts a:r:n: flag
+do
+    case "${flag}" in
+        a) AWS_ACCOUNT=${OPTARG};;
+        r) AWS_REGION=${OPTARG};;
+        n) NUM_SPARK_JOBS=${OPTARG};;
+        *) usage;;
+    esac
+done
+
+if [ -z "${AWS_ACCOUNT}" ] || [ -z "${AWS_REGION}" ]; then
+    usage
+fi
+
+# Export environment variables
+export AWS_ACCOUNT=${AWS_ACCOUNT}
+export AWS_REGION=${AWS_REGION}
+export NUM_SPARK_JOBS=${NUM_SPARK_JOBS}
+
 PATH_TEMPLATE="templates"
-FILE_TEMPLATE="spark-job-high-priority-template.yaml"
+FILE_TEMPLATE="sparkapplication-default-template.yaml"
 TEMP_TEMPLATE="/tmp"
 
-for (( i=1; i<=${NUM_JOBS}; i++ )); do
+for (( i=1; i<=${NUM_SPARK_JOBS}; i++ )); do
     export UUID="sec${i}-$(cat /proc/sys/kernel/random/uuid)"
+
     envsubst < ${PATH_TEMPLATE}/${FILE_TEMPLATE} > ${TEMP_TEMPLATE}/${FILE_TEMPLATE}.${UUID}
 
     kubectl apply -f ${TEMP_TEMPLATE}/${FILE_TEMPLATE}.${UUID} &
-done
-
-while true
-do
-    for n in $(kubectl get nodes -l karpenter.sh/capacity-type=spot --no-headers | cut -d " " -f1); do
-        echo "Pods on instance ${n}:";
-        kubectl get pods -n default --no-headers --field-selector spec.nodeName=${n} ; echo ;
-    done
- sleep 5
 done

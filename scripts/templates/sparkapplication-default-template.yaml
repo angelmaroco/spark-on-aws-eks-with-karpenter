@@ -10,7 +10,7 @@ spec:
     "spark.hadoop.fs.s3a.impl": "org.apache.hadoop.fs.s3a.S3AFileSystem"
   type: Scala
   mode: cluster
-  image: "482861842012.dkr.ecr.eu-west-1.amazonaws.com/spark-3.1.1-custom:1.0.0"
+  image: "${AWS_ACCOUNT}.dkr.ecr.${AWS_REGION}.amazonaws.com/spark-3.1.1-custom:1.0.0"
   imagePullPolicy: Always
   mainClass: org.apache.spark.examples.SparkPi
   arguments: ["10"]
