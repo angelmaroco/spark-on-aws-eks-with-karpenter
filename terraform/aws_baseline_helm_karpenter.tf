@@ -10,7 +10,7 @@ resource "helm_release" "karpenter" {
   name             = "karpenter"
   repository       = "https://charts.karpenter.sh"
   chart            = "karpenter"
-  version          = "0.5.1"
+  version          = "0.5.2"
   timeout          = 600
 
   set {
