@@ -26,3 +26,24 @@ resource "aws_s3_bucket_object" "spark_data_path" {
   key    = var.aws_baseline_s3_spark.spark_data_path
   source = "/dev/null"
 }
+
+resource "aws_s3_bucket_object" "spark_output_path" {
+  bucket = module.aws_baseline_s3_spark.bucket_id
+  acl    = "private"
+  key    = var.aws_baseline_s3_spark.spark_output
+  source = "/dev/null"
+}
+
+resource "aws_s3_bucket_object" "dataset_example" {
+  bucket = module.aws_baseline_s3_spark.bucket_id
+  key    = "${var.aws_baseline_s3_spark.spark_data_path}files/dataset-example.csv"
+  acl    = "private"
+  source = "sources/spark/dataset-example.csv"
+}
+
+resource "aws_s3_bucket_object" "python_example" {
+  bucket = module.aws_baseline_s3_spark.bucket_id
+  key    = "${var.aws_baseline_s3_spark.spark_data_path}src/jobs/example-001-csv2parquet.py"
+  acl    = "private"
+  source = "sources/spark/example-001-csv2parquet.py"
+}

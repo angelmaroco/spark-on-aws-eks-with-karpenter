@@ -5,21 +5,27 @@ metadata:
   namespace: default
 spec:
   sparkConf:
-    "spark.eventLog.enabled": "true"
-    "spark.eventLog.dir": "s3a://spark-on-aws-eks/spark-ui"
     "spark.hadoop.fs.s3a.impl": "org.apache.hadoop.fs.s3a.S3AFileSystem"
-  type: Scala
+    "spark.kubernetes.allocation.batch.size": "15"
+    "spark.kubernetes.local.dirs.tmpfs": "true"
+    "spark.io.encryption.enabled": "true"
+    "spark.eventLog.enabled": "true"
+    "spark.eventLog.dir": "s3a://${AWS_S3_BUCKET_SPARK_UI}/spark-ui"
+  type: Python
+  pythonVersion: "3"
   mode: cluster
-  image: "${AWS_ACCOUNT}.dkr.ecr.${AWS_REGION}.amazonaws.com/spark-3.1.1-custom:1.0.0"
+  image: "${AWS_ACCOUNT}.dkr.ecr.${AWS_REGION}.amazonaws.com/spark-custom:3.0.3"
   imagePullPolicy: Always
-  mainClass: org.apache.spark.examples.SparkPi
-  arguments: ["10"]
-  mainApplicationFile: "local:///opt/spark/examples/jars/spark-examples_2.11-2.4.5.jar"
-  sparkVersion: "2.4.5"
+  mainApplicationFile: "s3a://${AWS_S3_BUCKET_SPARK_UI}/data/src/jobs/example-001-csv2parquet.py"
+  arguments: [
+    "s3a://${AWS_S3_BUCKET_SPARK_UI}/data/files/dataset-example.csv",
+    "s3a://${AWS_S3_BUCKET_SPARK_UI}/output/dataset-example/"
+  ]
+  sparkVersion: "3.0.3"
   restartPolicy:
     type: Never
   volumes:
-    - name: "test-volume"
+    - name: "spark-volume-testing"
       hostPath:
         path: "/tmp"
         type: Directory
@@ -28,17 +34,17 @@ spec:
     coreLimit: "1000m"
     memory: "512m"
     labels:
-      version: 2.4.5
+      version: 3.0.3
     serviceAccount: spark
     volumeMounts:
-      - name: "test-volume"
+      - name: "spark-volume-testing"
         mountPath: "/tmp"
   executor:
     cores: 1
     instances: 1
     memory: "1000m"
     labels:
-      version: 2.4.5
+      version: 3.0.3
     volumeMounts:
-      - name: "test-volume"
+      - name: "spark-volume-testing"
         mountPath: "/tmp"

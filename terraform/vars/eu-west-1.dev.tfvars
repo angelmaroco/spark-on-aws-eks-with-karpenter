@@ -71,6 +71,7 @@ aws_baseline_s3_spark = {
   versioning              = true
   spark_ui_path           = "spark-ui/"
   spark_data_path         = "data/"
+  spark_output            = "output/"
 }
 
 aws_baseline_monitoring = {
@@ -93,6 +94,6 @@ aws_baseline_karpenter = {
 }
 
 aws_baseline_ecr = {
-  name                 = "spark-3.1.1-custom"
+  name                 = "spark-custom"
   image_tag_mutability = "MUTABLE"
 }

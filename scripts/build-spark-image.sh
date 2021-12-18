@@ -21,10 +21,10 @@ fi
 
 AWS_ECR_URI="${AWS_ACCOUNT}.dkr.ecr.${AWS_REGION}.amazonaws.com"
 
-IMAGE_SOURCE="datamechanics/spark:2.4.5-hadoop-3.1.0-java-8-scala-2.11-python-3.7-latest"
+IMAGE_SOURCE="ghcr.io/tripl-ai/arc:arc_3.10.0_spark_3.0.3_scala_2.12_hadoop_3.2.0_1.0.0"
 
-IMAGE_TARGET_TAG="1.0.0"
-ECR_REPOSITORY="spark-3.1.1-custom"
+IMAGE_TARGET_TAG="3.0.3"
+ECR_REPOSITORY="spark-custom"
 IMAGE_TARGET="${AWS_ECR_URI}/${ECR_REPOSITORY}:${IMAGE_TARGET_TAG}"
 
 echo "** Checking AWS ECR repository ${ECR_REPOSITORY}..."
