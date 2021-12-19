@@ -46,16 +46,6 @@ resource "random_password" "grafana_password" {
   special = false
 }
 
-resource "aws_secretsmanager_secret" "grafana_password_secret" {
-  name                    = "/grafana-${var.tags.environment}"
-  recovery_window_in_days = 0
-}
-
-resource "aws_secretsmanager_secret_version" "grafana_password_version" {
-  secret_id     = aws_secretsmanager_secret.grafana_password_secret.id
-  secret_string = random_password.grafana_password.result
-}
-
 resource "kubernetes_secret" "grafana-secrets" {
   metadata {
     name      = "grafana-credentials"
