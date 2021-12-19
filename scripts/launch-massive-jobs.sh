@@ -4,20 +4,21 @@
 # Build spark image and push to ECR                        #
 ############################################################
 
-usage() { echo "Usage: $0 -a <AWS_ACCOUNT (123456789012)> -r <AWS_REGION (eu-west-1)> -b <AWS_S3_BUCKET_SPARK_UI ()> -n <NUM_SPARK_JOBS (10)>" 1>&2; exit 1; }
+usage() { echo "Usage: $0 -a <AWS_ACCOUNT (123456789012)> -r <AWS_REGION (eu-west-1)> -b <AWS_S3_BUCKET_SPARK_UI ()> -n <NUM_SPARK_JOBS (10)> -t <TYPE_WORKLOAD (workload-intensive-cpu|workload-moderate-cpu|workload-low-cpu|workload-intensive-memory)" 1>&2; exit 1; }
 
-while getopts a:r:b:n: flag
+while getopts a:r:b:n:t: flag
 do
     case "${flag}" in
         a) AWS_ACCOUNT=${OPTARG};;
         r) AWS_REGION=${OPTARG};;
         b) AWS_S3_BUCKET_SPARK_UI=${OPTARG};;
         n) NUM_SPARK_JOBS=${OPTARG};;
+        t) TYPE_WORKLOAD=${OPTARG};;
         *) usage;;
     esac
 done
 
-if [ -z "${AWS_ACCOUNT}" ] || [ -z "${AWS_REGION}" ] || [ -z "${AWS_S3_BUCKET_SPARK_UI}" ] || [ -z "${NUM_SPARK_JOBS}" ]; then
+if [ -z "${AWS_ACCOUNT}" ] || [ -z "${AWS_REGION}" ] || [ -z "${AWS_S3_BUCKET_SPARK_UI}" ] || [ -z "${NUM_SPARK_JOBS}" ] || [ -z "${TYPE_WORKLOAD}" ]; then
     usage
 fi
 
@@ -26,6 +27,7 @@ export AWS_ACCOUNT=${AWS_ACCOUNT}
 export AWS_REGION=${AWS_REGION}
 export AWS_S3_BUCKET_SPARK_UI=${AWS_S3_BUCKET_SPARK_UI}
 export NUM_SPARK_JOBS=${NUM_SPARK_JOBS}
+export TYPE_WORKLOAD=${TYPE_WORKLOAD}
 
 PATH_TEMPLATE="scripts/templates"
 FILE_TEMPLATE="sparkapplication-default-template.yaml"

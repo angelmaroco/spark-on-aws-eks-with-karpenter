@@ -3,6 +3,8 @@ kind: Provisioner
 metadata:
   name: "karpenter-provisioner-workload-intensive-memory"
 spec:
+  labels:
+    intent: "workload-intensive-memory"
   requirements:
     - key: "node.kubernetes.io/instance-type"
       operator: In

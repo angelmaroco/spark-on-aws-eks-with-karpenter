@@ -3,6 +3,8 @@ kind: Provisioner
 metadata:
   name: "karpenter-provisioner-workload-low-cpu"
 spec:
+  labels:
+    intent: "workload-low-cpu"
   requirements:
     - key: "node.kubernetes.io/instance-type"
       operator: In

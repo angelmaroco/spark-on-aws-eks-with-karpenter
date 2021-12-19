@@ -29,6 +29,8 @@ spec:
       hostPath:
         path: "/tmp"
         type: Directory
+  nodeSelector:
+    intent: "${TYPE_WORKLOAD}"
   driver:
     cores: 1
     coreLimit: "1000m"
@@ -41,7 +43,7 @@ spec:
         mountPath: "/tmp"
   executor:
     cores: 1
-    instances: 10
+    instances: 1
     memory: "1000m"
     labels:
       version: 3.0.3
