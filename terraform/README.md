@@ -15,6 +15,7 @@
 | <a name="provider_helm"></a> [helm](#provider\_helm) | 2.4.1 |
 | <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | ~> 2.6.1 |
 | <a name="provider_local"></a> [local](#provider\_local) | n/a |
+| <a name="provider_null"></a> [null](#provider\_null) | n/a |
 | <a name="provider_random"></a> [random](#provider\_random) | n/a |
 | <a name="provider_template"></a> [template](#provider\_template) | n/a |
 
@@ -62,6 +63,7 @@
 | [kubernetes_namespace.spark-operator](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
 | [kubernetes_secret.grafana-secrets](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret) | resource |
 | [kubernetes_service_account.spark-service-account](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/service_account) | resource |
+| [null_resource.build-and-push-ecr](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [random_password.grafana_password](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
 | [random_string.suffix](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) | resource |
 | [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/availability_zones) | data source |

@@ -1,7 +1,7 @@
 apiVersion: "sparkoperator.k8s.io/v1beta2"
 kind: SparkApplication
 metadata:
-  name: spark-pi-${UUID}
+  name: example-001-${UUID}
   namespace: default
 spec:
   sparkConf:
@@ -41,7 +41,7 @@ spec:
         mountPath: "/tmp"
   executor:
     cores: 1
-    instances: 1
+    instances: 10
     memory: "1000m"
     labels:
       version: 3.0.3

@@ -27,7 +27,7 @@ export AWS_REGION=${AWS_REGION}
 export AWS_S3_BUCKET_SPARK_UI=${AWS_S3_BUCKET_SPARK_UI}
 export NUM_SPARK_JOBS=${NUM_SPARK_JOBS}
 
-PATH_TEMPLATE="templates"
+PATH_TEMPLATE="scripts/templates"
 FILE_TEMPLATE="sparkapplication-default-template.yaml"
 TEMP_TEMPLATE="/tmp"
 

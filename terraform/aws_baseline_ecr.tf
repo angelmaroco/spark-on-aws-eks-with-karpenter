@@ -28,3 +28,13 @@ resource "aws_ecr_repository_policy" "spark-custom-policy" {
   }
   EOF
 }
+
+resource "null_resource" "build-and-push-ecr" {
+  provisioner "local-exec" {
+    command = "../scripts/build-spark-image.sh -a ${data.aws_caller_identity.current.account_id} -r ${data.aws_region.current.name}"
+  }
+
+  depends_on = [
+    aws_ecr_repository.spark-custom
+  ]
+}
