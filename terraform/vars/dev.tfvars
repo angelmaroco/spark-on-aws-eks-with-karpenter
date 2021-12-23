@@ -77,23 +77,9 @@ aws_baseline_s3_spark = {
 aws_baseline_monitoring = {
   grafana_admin_user = "admin"
 }
-aws_baseline_karpenter = {
-  provisioner_low_priority_name            = "karpenter-provisioner-low-priority"
-  provisioner_low_priority_instance_type   = ["t3.medium", "t3.large", "t3.2xlarge", "m5.4xlarge", "m5.8xlarge"]
-  provisioner_low_priority_arch            = ["amd64"]
-  provisioner_low_priority_capacity_type   = ["spot"]
-  provisioner_low_priority_subnet_selector = "private"
-  provisioner_low_priority_ttl_second      = 30
-
-  provisioner_high_priority_name            = "karpenter-provisioner-high-priority"
-  provisioner_high_priority_instance_type   = ["t3.medium", "t3.large", "t3.2xlarge", "m5.4xlarge", "m5.8xlarge"]
-  provisioner_high_priority_arch            = ["amd64"]
-  provisioner_high_priority_capacity_type   = ["on-demand", "spot"]
-  provisioner_high_priority_subnet_selector = "private"
-  provisioner_high_priority_ttl_second      = 60
-}
-
 aws_baseline_ecr = {
-  name                 = "spark-custom"
-  image_tag_mutability = "MUTABLE"
+  name                         = "spark-custom"
+  image_tag_mutability         = "IMMUTABLE"
+  image_scanning_configuration = "true"
+  encryption_type              = "KMS"
 }

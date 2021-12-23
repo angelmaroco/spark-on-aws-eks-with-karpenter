@@ -16,7 +16,6 @@ data "aws_iam_policy_document" "aws_baseline_kms_document" {
       "*"
     ]
   }
-
   statement {
     effect = "Allow"
 

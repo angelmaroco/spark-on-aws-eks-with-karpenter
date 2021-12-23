@@ -31,12 +31,9 @@ export TYPE_WORKLOAD=${TYPE_WORKLOAD}
 
 PATH_TEMPLATE="scripts/templates"
 FILE_TEMPLATE="sparkapplication-default-template.yaml"
-TEMP_TEMPLATE="/tmp"
 
 for (( i=1; i<=${NUM_SPARK_JOBS}; i++ )); do
     export UUID="sec${i}-$(cat /proc/sys/kernel/random/uuid)"
 
-    envsubst < ${PATH_TEMPLATE}/${FILE_TEMPLATE} > ${TEMP_TEMPLATE}/${FILE_TEMPLATE}.${UUID}
-
-    kubectl apply -f ${TEMP_TEMPLATE}/${FILE_TEMPLATE}.${UUID} &
+    cat ${PATH_TEMPLATE}/${FILE_TEMPLATE} | envsubst | kubectl apply -f - &
 done

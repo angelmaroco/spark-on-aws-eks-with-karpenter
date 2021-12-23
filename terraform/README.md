@@ -71,6 +71,7 @@
 | [aws_iam_policy.ecr_read_only](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy) | data source |
 | [aws_iam_policy.ssm_managed_instance](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy) | data source |
 | [aws_iam_policy_document.aws_baseline_kms_document](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.spark-custom-policy-document](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 | [kubernetes_service.grafana](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/data-sources/service) | data source |
 | [kubernetes_service.kubernetes-dashboard](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/data-sources/service) | data source |
@@ -87,7 +88,6 @@
 |------|-------------|------|---------|:--------:|
 | <a name="input_aws_baseline_ecr"></a> [aws\_baseline\_ecr](#input\_aws\_baseline\_ecr) | n/a | `map(string)` | n/a | yes |
 | <a name="input_aws_baseline_eks"></a> [aws\_baseline\_eks](#input\_aws\_baseline\_eks) | n/a | `any` | n/a | yes |
-| <a name="input_aws_baseline_karpenter"></a> [aws\_baseline\_karpenter](#input\_aws\_baseline\_karpenter) | n/a | `any` | n/a | yes |
 | <a name="input_aws_baseline_kms"></a> [aws\_baseline\_kms](#input\_aws\_baseline\_kms) | n/a | `map(string)` | n/a | yes |
 | <a name="input_aws_baseline_monitoring"></a> [aws\_baseline\_monitoring](#input\_aws\_baseline\_monitoring) | n/a | `any` | n/a | yes |
 | <a name="input_aws_baseline_s3_spark"></a> [aws\_baseline\_s3\_spark](#input\_aws\_baseline\_s3\_spark) | n/a | `any` | n/a | yes |
@@ -100,5 +100,4 @@
 |------|-------------|
 | <a name="output_account_id"></a> [account\_id](#output\_account\_id) | n/a |
 | <a name="output_account_region"></a> [account\_region](#output\_account\_region) | n/a |
-| <a name="output_grafana_password"></a> [grafana\_password](#output\_grafana\_password) | n/a |
-| <a name="output_grafana_username"></a> [grafana\_username](#output\_grafana\_username) | n/a |
+| <a name="output_cluster_endpoint"></a> [cluster\_endpoint](#output\_cluster\_endpoint) | Endpoint for EKS control plane. |

@@ -64,14 +64,16 @@ module "endpoints" {
 }
 
 resource "aws_security_group" "non_default" {
-  vpc_id = module.aws_baseline_vpc.vpc_id
-  name   = "VPC-ENDPOINT-SG"
+  vpc_id      = module.aws_baseline_vpc.vpc_id
+  name        = "sg_endpoints_ecr"
+  description = "Endpoint ECR security group"
 
   ingress {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
     cidr_blocks = [var.aws_baseline_vpc.cidr]
+    description = "Endpoint ECR security group 443"
   }
 
   egress {
@@ -79,5 +81,6 @@ resource "aws_security_group" "non_default" {
     to_port     = 0
     protocol    = -1
     cidr_blocks = [var.aws_baseline_vpc.cidr]
+    description = "Endpoint ECR security group (all traffic)"
   }
 }

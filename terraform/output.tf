@@ -6,11 +6,7 @@ output "account_region" {
   value = data.aws_region.current.name
 }
 
-output "grafana_username" {
-  value = "admin"
-}
-
-output "grafana_password" {
-  value     = random_password.grafana_password.result
-  sensitive = true
+output "cluster_endpoint" {
+  description = "Endpoint for EKS control plane."
+  value       = module.eks.cluster_endpoint
 }

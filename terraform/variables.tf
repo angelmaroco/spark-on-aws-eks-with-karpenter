@@ -20,10 +20,6 @@ variable "aws_baseline_monitoring" {
   type = any
 }
 
-variable "aws_baseline_karpenter" {
-  type = any
-}
-
 variable "aws_baseline_ecr" {
   type = map(string)
 }
