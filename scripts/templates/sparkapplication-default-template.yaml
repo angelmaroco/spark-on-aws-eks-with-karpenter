@@ -29,6 +29,7 @@ spec:
       hostPath:
         path: "/tmp"
         type: Directory
+  timeToLiveSeconds: 5
   nodeSelector:
     intent: "${TYPE_WORKLOAD}"
   driver:
