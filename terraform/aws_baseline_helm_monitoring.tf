@@ -73,8 +73,9 @@ resource "helm_release" "spark-history-server" {
 
   name = "spark-history-server"
 
-  repository = "https://charts.helm.sh/stable"
+  repository = "https://charts.spot.io"
   chart      = "spark-history-server"
+  version    = "1.5.0"
   namespace  = kubernetes_namespace.monitoring.metadata.0.name
   timeout    = 600
 
@@ -96,7 +97,7 @@ resource "helm_release" "spark-history-server" {
 
   set {
     name  = "s3.logDirectory"
-    value = "s3a://${var.aws_baseline_s3_spark.bucket_name}/${var.aws_baseline_s3_spark.spark_ui_path}"
+    value = "s3a://${module.aws_baseline_s3_spark.bucket_id}/${var.aws_baseline_s3_spark.spark_ui_path}"
   }
 }
 

@@ -31,6 +31,7 @@
 | <a name="module_iam_assumable_role_karpenter"></a> [iam\_assumable\_role\_karpenter](#module\_iam\_assumable\_role\_karpenter) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | 4.7.0 |
 | <a name="module_sg_eks_worker_group_all"></a> [sg\_eks\_worker\_group\_all](#module\_sg\_eks\_worker\_group\_all) | terraform-aws-modules/security-group/aws | 3.2.0 |
 | <a name="module_sg_eks_worker_group_on_demand"></a> [sg\_eks\_worker\_group\_on\_demand](#module\_sg\_eks\_worker\_group\_on\_demand) | terraform-aws-modules/security-group/aws | 3.2.0 |
+| <a name="module_sg_eks_worker_group_spark_low_cpu"></a> [sg\_eks\_worker\_group\_spark\_low\_cpu](#module\_sg\_eks\_worker\_group\_spark\_low\_cpu) | terraform-aws-modules/security-group/aws | 3.2.0 |
 | <a name="module_sg_eks_worker_group_spot"></a> [sg\_eks\_worker\_group\_spot](#module\_sg\_eks\_worker\_group\_spot) | terraform-aws-modules/security-group/aws | 3.2.0 |
 
 ## Resources
@@ -80,6 +81,7 @@
 | [local_file.helm_chart_dashboard](https://registry.terraform.io/providers/hashicorp/local/latest/docs/data-sources/file) | data source |
 | [local_file.helm_chart_grafana](https://registry.terraform.io/providers/hashicorp/local/latest/docs/data-sources/file) | data source |
 | [local_file.helm_chart_spark_history_server](https://registry.terraform.io/providers/hashicorp/local/latest/docs/data-sources/file) | data source |
+| [local_file.helm_chart_spark_operator](https://registry.terraform.io/providers/hashicorp/local/latest/docs/data-sources/file) | data source |
 | [template_file.file](https://registry.terraform.io/providers/hashicorp/template/latest/docs/data-sources/file) | data source |
 
 ## Inputs
@@ -100,4 +102,8 @@
 |------|-------------|
 | <a name="output_account_id"></a> [account\_id](#output\_account\_id) | n/a |
 | <a name="output_account_region"></a> [account\_region](#output\_account\_region) | n/a |
+| <a name="output_cloudwatch_log_group_name"></a> [cloudwatch\_log\_group\_name](#output\_cloudwatch\_log\_group\_name) | EKS cloudwatch log name. |
 | <a name="output_cluster_endpoint"></a> [cluster\_endpoint](#output\_cluster\_endpoint) | Endpoint for EKS control plane. |
+| <a name="output_cluster_version"></a> [cluster\_version](#output\_cluster\_version) | EKS version |
+| <a name="output_ecr_spark_image"></a> [ecr\_spark\_image](#output\_ecr\_spark\_image) | ECR Spark image |
+| <a name="output_s3_spark_bucket"></a> [s3\_spark\_bucket](#output\_s3\_spark\_bucket) | Spark S3 bucket |

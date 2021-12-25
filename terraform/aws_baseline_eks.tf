@@ -1,3 +1,18 @@
+locals {
+  worker_groups_tags = [
+    {
+      "key"                 = "k8s.io/cluster-autoscaler/enabled"
+      "propagate_at_launch" = "false"
+      "value"               = "true"
+    },
+    {
+      "key"                 = "k8s.io/cluster-autoscaler/${local.name}"
+      "propagate_at_launch" = "false"
+      "value"               = "owned"
+    }
+  ]
+}
+
 data "aws_eks_cluster" "cluster" {
   name = module.eks.cluster_id
 }
@@ -36,18 +51,7 @@ module "eks" {
       kubelet_extra_args            = var.aws_baseline_eks.worker_groups_kubelet_extra_args
       suspended_processes           = var.aws_baseline_eks.worker_groups_suspended_processes
       additional_security_group_ids = [module.sg_eks_worker_group_on_demand.this_security_group_id]
-      tags = [
-        {
-          "key"                 = "k8s.io/cluster-autoscaler/enabled"
-          "propagate_at_launch" = "false"
-          "value"               = "true"
-        },
-        {
-          "key"                 = "k8s.io/cluster-autoscaler/${local.name}"
-          "propagate_at_launch" = "false"
-          "value"               = "owned"
-        }
-      ]
+      tags                          = local.worker_groups_tags
     },
     {
       name                          = var.aws_baseline_eks.worker_groups_spot_name
@@ -59,18 +63,19 @@ module "eks" {
       kubelet_extra_args            = var.aws_baseline_eks.worker_groups_spot_kubelet_extra_args
       suspended_processes           = var.aws_baseline_eks.worker_groups_spot_suspended_processes
       additional_security_group_ids = [module.sg_eks_worker_group_spot.this_security_group_id]
-      tags = [
-        {
-          "key"                 = "k8s.io/cluster-autoscaler/enabled"
-          "propagate_at_launch" = "false"
-          "value"               = "true"
-        },
-        {
-          "key"                 = "k8s.io/cluster-autoscaler/${local.name}"
-          "propagate_at_launch" = "false"
-          "value"               = "owned"
-        }
-      ]
+      tags                          = local.worker_groups_tags
+    },
+    {
+      name                          = var.aws_baseline_eks.worker_groups_spark_low_cpu_name
+      instance_type                 = var.aws_baseline_eks.worker_groups_spark_low_cpu_instance_type
+      additional_userdata           = var.aws_baseline_eks.worker_groups_spark_low_cpu_additional_userdata
+      asg_desired_capacity          = var.aws_baseline_eks.worker_groups_spark_low_cpu_asg_desired_capacity
+      asg_max_size                  = var.aws_baseline_eks.worker_groups_spark_low_cpu_asg_max_size
+      asg_min_size                  = var.aws_baseline_eks.worker_groups_spark_low_cpu_asg_min_size
+      kubelet_extra_args            = var.aws_baseline_eks.worker_groups_spark_low_cpu_kubelet_extra_args
+      suspended_processes           = var.aws_baseline_eks.worker_groups_spark_low_cpu_suspended_processes
+      additional_security_group_ids = [module.sg_eks_worker_group_spark_low_cpu.this_security_group_id]
+      tags                          = local.worker_groups_tags
     }
 
   ]
@@ -110,6 +115,27 @@ module "sg_eks_worker_group_spot" {
   version             = "3.2.0"
   name                = "sg_eks_worker_group_spot"
   description         = "Security group for eks worker group"
+  vpc_id              = module.aws_baseline_vpc.vpc_id
+  ingress_cidr_blocks = ["0.0.0.0/0"]
+
+  ingress_with_cidr_blocks = [
+    {
+      description = "SSH"
+      from_port   = 22
+      to_port     = 22
+      protocol    = "tcp"
+      cidr_blocks = "0.0.0.0/0"
+    }
+  ]
+  egress_rules = ["all-all"]
+  tags         = var.tags
+}
+
+module "sg_eks_worker_group_spark_low_cpu" {
+  source              = "terraform-aws-modules/security-group/aws"
+  version             = "3.2.0"
+  name                = "sg_eks_worker_group_spark_low_cpu"
+  description         = "Security group for eks worker group spark_low_cpu"
   vpc_id              = module.aws_baseline_vpc.vpc_id
   ingress_cidr_blocks = ["0.0.0.0/0"]
 

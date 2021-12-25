@@ -4,7 +4,7 @@ module "aws_baseline_s3_spark" {
 
   block_public_acls       = var.aws_baseline_s3_spark.block_public_acls
   block_public_policy     = var.aws_baseline_s3_spark.block_public_policy
-  bucket_name             = var.aws_baseline_s3_spark.bucket_name
+  bucket_name             = "${data.aws_region.current.name}-${data.aws_caller_identity.current.account_id}-${var.aws_baseline_s3_spark.bucket_name}"
   enabled                 = var.aws_baseline_s3_spark.create_s3_bucket
   force_destroy           = var.aws_baseline_s3_spark.force_destroy
   restrict_public_buckets = var.aws_baseline_s3_spark.restrict_public_buckets

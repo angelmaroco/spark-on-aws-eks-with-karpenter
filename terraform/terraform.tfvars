@@ -35,11 +35,12 @@ aws_baseline_kms = {
   name                    = "s3-logging"
 }
 aws_baseline_eks = {
-  cluster_endpoint_private_access    = true
-  cluster_endpoint_public_access     = true
-  enable_irsa                        = true
-  attach_worker_cni_policy           = true
-  cluster_enabled_log_types          = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
+  cluster_endpoint_private_access = true
+  cluster_endpoint_public_access  = true
+  enable_irsa                     = true
+  attach_worker_cni_policy        = true
+  cluster_enabled_log_types       = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
+
   worker_groups_name                 = "worker-group-on-demand"
   worker_groups_instance_type        = "t3.medium"
   worker_groups_additional_userdata  = ""
@@ -57,6 +58,15 @@ aws_baseline_eks = {
   worker_groups_spot_asg_min_size         = 0
   worker_groups_spot_kubelet_extra_args   = "--node-labels=node.kubernetes.io/lifecycle=spot"
   worker_groups_spot_suspended_processes  = ["AZRebalance"]
+
+  worker_groups_spark_low_cpu_name                 = "worker-group-spark-low-cpu"
+  worker_groups_spark_low_cpu_instance_type        = "t3a.xlarge"
+  worker_groups_spark_low_cpu_additional_userdata  = ""
+  worker_groups_spark_low_cpu_asg_desired_capacity = 1
+  worker_groups_spark_low_cpu_asg_max_size         = 2
+  worker_groups_spark_low_cpu_asg_min_size         = 1
+  worker_groups_spark_low_cpu_kubelet_extra_args   = "--node-labels=intent=workload-low-cpu"
+  worker_groups_spark_low_cpu_suspended_processes  = ["AZRebalance"]
 }
 
 aws_baseline_s3_spark = {
