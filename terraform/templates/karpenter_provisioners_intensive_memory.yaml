@@ -16,6 +16,8 @@ spec:
       operator: In
       values: ["spot"]
   provider:
+    tags:
+      Name: "karpenter-provisioner-workload-intensive-memory"
     instanceProfile: "KarpenterNodeInstanceProfile-cluster-spark-on-aws-eks-dev"
     subnetSelector:
         Name: "*spark-on-aws-eks-dev-private*"
