@@ -40,15 +40,10 @@ module "endpoints" {
 
   endpoints = {
     s3 = {
-      service             = "s3"
-      private_dns_enabled = false
-      tags                = { Name = "${var.tags.project}-${var.tags.environment}-s3-vpc-endpoint" }
-    },
-    ecr_api = {
-      service             = "ecr.api"
-      private_dns_enabled = true
-      subnet_ids          = module.aws_baseline_vpc.private_subnets
-      tags                = { Name = "${var.tags.project}-${var.tags.environment}-ecr-api-vpc-endpoint" }
+      service         = "s3"
+      service_type    = "Gateway"
+      route_table_ids = flatten([module.aws_baseline_vpc.private_route_table_ids])
+      tags            = { Name = "${var.tags.project}-${var.tags.environment}-s3-vpc-endpoint" }
     },
     ecr_dkr = {
       service             = "ecr.dkr"
