@@ -3,6 +3,10 @@ kind: SparkApplication
 metadata:
   name: example-001-${UUID}
   namespace: default
+  labels:
+    app: spark-example
+    applicationId: "spark-example"
+    queue: root.default
 spec:
   sparkConf:
     "spark.hadoop.fs.s3a.impl": "org.apache.hadoop.fs.s3a.S3AFileSystem"
@@ -25,11 +29,12 @@ spec:
   restartPolicy:
     type: Never
   volumes:
-    - name: "spark-volume-testing"
+    - name: "spark-volume-testing-${UUID}"
       hostPath:
         path: "/tmp"
         type: Directory
   timeToLiveSeconds: 5
+  batchScheduler: "yunikorn"
   nodeSelector:
     intent: "${TYPE_WORKLOAD}"
   driver:
@@ -40,14 +45,15 @@ spec:
       version: 3.0.3
     serviceAccount: spark
     volumeMounts:
-      - name: "spark-volume-testing"
+      - name: "spark-volume-testing-${UUID}"
         mountPath: "/tmp"
   executor:
     cores: 1
     instances: 1
+    coreRequest: "512m"
     memory: "1000m"
     labels:
       version: 3.0.3
     volumeMounts:
-      - name: "spark-volume-testing"
+      - name: "spark-volume-testing-${UUID}"
         mountPath: "/tmp"
