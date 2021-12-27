@@ -14,7 +14,7 @@ resource "helm_release" "spark-operator" {
   namespace  = kubernetes_namespace.spark-operator.metadata.0.name
   repository = "https://googlecloudplatform.github.io/spark-on-k8s-operator"
   version    = "1.1.14"
-  timeout    = 100
+  timeout    = 300
 
   values = [data.local_file.helm_chart_spark_operator.content]
 }
