@@ -4,9 +4,10 @@ metadata:
   name: example-001-${UUID}
   namespace: default
   labels:
-    app: spark-example
-    applicationId: "spark-example"
-    queue: root.default
+    app: "spark-example-${UUID}"
+    applicationId: "spark-example-${UUID}"
+    queue: "root.default"
+    disableStateAware: "true"
 spec:
   sparkConf:
     "spark.hadoop.fs.s3a.impl": "org.apache.hadoop.fs.s3a.S3AFileSystem"
@@ -36,13 +37,28 @@ spec:
   timeToLiveSeconds: 5
   batchScheduler: "yunikorn"
   nodeSelector:
-    intent: "${TYPE_WORKLOAD}"
+    "intent": "${TYPE_WORKLOAD}"
   driver:
     cores: 1
     coreLimit: "1000m"
     memory: "512m"
     labels:
       version: 3.0.3
+    annotations:
+      yunikorn.apache.org/schedulingPolicyParameters: "placeholderTimeoutSeconds=30"
+      yunikorn.apache.org/taskGroupName: "spark-driver-${UUID}"
+      yunikorn.apache.org/task-groups: |-
+        [{
+          "name": "spark-executor-${UUID}",
+          "minMember": 1,
+          "minResource": {
+            "cpu": "512m",
+            "memory": "512M"
+          },
+          "nodeSelector": {
+              "intent": "${TYPE_WORKLOAD}"
+          }
+        }]
     serviceAccount: spark
     volumeMounts:
       - name: "spark-volume-testing-${UUID}"
@@ -54,6 +70,8 @@ spec:
     memory: "1000m"
     labels:
       version: 3.0.3
+    annotations:
+      yunikorn.apache.org/taskGroupName: "spark-executor-${UUID}"
     volumeMounts:
       - name: "spark-volume-testing-${UUID}"
         mountPath: "/tmp"

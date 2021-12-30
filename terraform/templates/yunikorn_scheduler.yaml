@@ -23,7 +23,7 @@ imagePullSecrets:
 
 userLabelKey: "yunikorn.apache.org/username"
 
-operatorPlugins: "general"
+operatorPlugins: "general,spark-k8s-operator"
 
 serviceAccount: yunikorn-admin
 image:
@@ -84,22 +84,6 @@ configuration: |
                 max:
                   memory: 800000
                   vcore: 80000
-            - name: advertisement
-              resources:
-                guaranteed:
-                  memory: 500000
-                  vcore: 50000
-                max:
-                  memory: 800000
-                  vcore: 80000
-            - name: search
-              resources:
-                guaranteed:
-                  memory: 400000
-                  vcore: 40000
-                max:
-                  memory: 600000
-                  vcore: 60000
             - name: sandbox
               resources:
                 guaranteed:
