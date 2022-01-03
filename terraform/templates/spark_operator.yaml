@@ -4,7 +4,7 @@
 
 # replicaCount -- Desired number of pods, leaderElection will be enabled
 # if this is greater than 1
-replicaCount: 1
+replicaCount: 3
 
 image:
   repository: duyetdev/spark-operator
@@ -124,7 +124,18 @@ nodeSelector: {}
 tolerations: []
 
 # affinity -- Affinity for pod assignment
-affinity: {}
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+              - key: node-type
+                operator: In
+                values:
+                  - core
+          topologyKey: failure-domain.beta.kubernetes.io/zone
+        weight: 100
 
 # podAnnotations -- Additional annotations to add to the pod
 podAnnotations: {}

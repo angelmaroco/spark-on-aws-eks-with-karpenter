@@ -3,17 +3,12 @@ locals {
     {
       "key"                 = "k8s.io/cluster-autoscaler/enabled"
       "propagate_at_launch" = "true"
-      "value"               = "true"
+      "value"               = "false"
     },
     {
-      "key"                 = "k8s.io/cluster-autoscaler/${local.name}"
+      "key"                 = "node-type"
       "propagate_at_launch" = "true"
-      "value"               = "owned"
-    },
-    {
-      "key"                 = "workload-type"
-      "propagate_at_launch" = "true"
-      "value"               = "k8s-core"
+      "value"               = "core"
     }
   ]
 
@@ -29,12 +24,17 @@ locals {
       "value"               = "owned"
     },
     {
-      "key"                 = "workload-type"
+      "key"                 = "node-type"
       "propagate_at_launch" = "true"
       "value"               = "spark"
     },
     {
-      "key"                 = "k8s.io/cluster-autoscaler/node-template/label/intent"
+      "key"                 = "k8s.io/cluster-autoscaler/node-template/label/workload"
+      "propagate_at_launch" = "true"
+      "value"               = "workload-low-cpu"
+    },
+    {
+      "key"                 = "workload"
       "propagate_at_launch" = "true"
       "value"               = "workload-low-cpu"
     }

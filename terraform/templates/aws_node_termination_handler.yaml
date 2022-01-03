@@ -171,7 +171,19 @@ kubernetesEventsExtraAnnotations: ""
 tolerations:
   - operator: "Exists"
 
-affinity: {}
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+              - key: node-type
+                operator: In
+                values:
+                  - core
+          topologyKey: failure-domain.beta.kubernetes.io/zone
+        weight: 100
+
 linuxAffinity: {}
 windowsAffinity: {}
 
@@ -237,7 +249,7 @@ useHostNetwork: true
 workers: 10
 
 # The number of replicas in the NTH deployment when using queue-processor mode (NOTE: increasing this may cause duplicate webhooks since NTH pods are stateless)
-replicas: 1
+replicas: 3
 
 # podDisruptionBudget specifies the disruption budget for the controller pods.
 # Disruption budget will be configured only when the replicaCount is greater than 1

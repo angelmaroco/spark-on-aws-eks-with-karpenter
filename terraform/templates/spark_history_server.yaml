@@ -8,3 +8,15 @@ nfs:
   pvcName: nfs-pvc
 services:
   type: NodePort
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+              - key: node-type
+                operator: In
+                values:
+                  - core
+          topologyKey: failure-domain.beta.kubernetes.io/zone
+        weight: 100

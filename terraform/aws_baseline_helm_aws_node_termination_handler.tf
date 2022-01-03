@@ -9,7 +9,7 @@ resource "helm_release" "aws_node_termination_handler" {
   repository       = "https://aws.github.io/eks-charts"
   chart            = "aws-node-termination-handler"
   version          = "0.16.0"
-  timeout          = 100
+  timeout          = 600
 
   values = [data.local_file.helm_chart_aws_node_termination.content]
 }

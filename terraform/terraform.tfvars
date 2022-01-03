@@ -41,17 +41,17 @@ aws_baseline_eks = {
   attach_worker_cni_policy        = true
   cluster_enabled_log_types       = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 
-  worker_groups_name                 = "worker-group-on-demand"
-  worker_groups_instance_type        = "t3.medium"
+  worker_groups_name                 = "core-group-on-demand"
+  worker_groups_instance_type        = "m5a.large"
   worker_groups_additional_userdata  = ""
   worker_groups_asg_desired_capacity = 3
   worker_groups_asg_max_size         = 5
   worker_groups_asg_min_size         = 3
-  worker_groups_kubelet_extra_args   = "--node-labels=node.kubernetes.io/lifecycle=normal"
+  worker_groups_kubelet_extra_args   = "--node-labels=node.kubernetes.io/lifecycle=normal,node-type=core"
   worker_groups_suspended_processes  = ["AZRebalance"]
 
-  worker_groups_spot_name                 = "worker-group-spot"
-  worker_groups_spot_instance_type        = "t3a.medium"
+  worker_groups_spot_name                 = "core-group-spot"
+  worker_groups_spot_instance_type        = "m5a.large"
   worker_groups_spot_additional_userdata  = ""
   worker_groups_spot_asg_desired_capacity = 0
   worker_groups_spot_asg_max_size         = 5
@@ -59,13 +59,13 @@ aws_baseline_eks = {
   worker_groups_spot_kubelet_extra_args   = "--node-labels=node.kubernetes.io/lifecycle=spot"
   worker_groups_spot_suspended_processes  = ["AZRebalance"]
 
-  worker_groups_spark_low_cpu_name                 = "worker-group-spot-spark-low-cpu"
-  worker_groups_spark_low_cpu_instance_type        = ["m5.large", "m5a.large", "m5.xlarge", "m5a.xlarge", "m5.2xlarge", "m5a.2xlarge"]
+  worker_groups_spark_low_cpu_name                 = "spark-group-workload-low-cpu-spot"
+  worker_groups_spark_low_cpu_instance_type        = ["m5.xlarge", "m5a.xlarge"]
   worker_groups_spark_low_cpu_additional_userdata  = ""
   worker_groups_spark_low_cpu_asg_desired_capacity = 0
   worker_groups_spark_low_cpu_asg_max_size         = 10
   worker_groups_spark_low_cpu_asg_min_size         = 0
-  worker_groups_spark_low_cpu_kubelet_extra_args   = "--node-labels=node.kubernetes.io/lifecycle=spot,intent=workload-low-cpu"
+  worker_groups_spark_low_cpu_kubelet_extra_args   = "--node-labels=node.kubernetes.io/lifecycle=spot,workload=workload-low-cpu"
   worker_groups_spark_low_cpu_suspended_processes  = ["AZRebalance"]
 }
 

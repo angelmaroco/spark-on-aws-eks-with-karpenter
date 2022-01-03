@@ -224,9 +224,18 @@ spec:
         - name: tmp-volume
           emptyDir: {}
       serviceAccountName: kubernetes-dashboard
-      nodeSelector:
-        "kubernetes.io/os": linux
-        "node.kubernetes.io/lifecycle": "normal"
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: node-type
+                      operator: In
+                      values:
+                        - core
+                topologyKey: failure-domain.beta.kubernetes.io/zone
+              weight: 100
       # Comment the following tolerations if Dashboard must not be deployed on master
       tolerations:
         - key: node-role.kubernetes.io/master
@@ -293,9 +302,18 @@ spec:
             runAsUser: 1001
             runAsGroup: 2001
       serviceAccountName: kubernetes-dashboard
-      nodeSelector:
-        "kubernetes.io/os": linux
-      # Comment the following tolerations if Dashboard must not be deployed on master
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: node-type
+                      operator: In
+                      values:
+                        - core
+                topologyKey: failure-domain.beta.kubernetes.io/zone
+              weight: 100
       tolerations:
         - key: node-role.kubernetes.io/master
           effect: NoSchedule

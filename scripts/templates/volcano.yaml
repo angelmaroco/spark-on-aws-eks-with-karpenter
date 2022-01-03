@@ -1,0 +1,29 @@
+apiVersion: scheduling.volcano.sh/v1beta1
+kind: Queue
+metadata:
+  name: queue-workload-low-cpu
+spec:
+  weight: 1
+  reclaimable: false
+---
+apiVersion: scheduling.volcano.sh/v1beta1
+kind: PodGroup
+metadata:
+  name: podgroup-driver-workload-low-cpu
+spec:
+  minMember: 10
+  minResources:
+    cpu: "10"
+    memory: "10000Mi"
+  queue: queue-workload-low-cpu
+---
+apiVersion: scheduling.volcano.sh/v1beta1
+kind: PodGroup
+metadata:
+  name: podgroup-executors-workload-low-cpu
+spec:
+  minMember: 1
+  minResources:
+    cpu: "2512m"
+    memory: "4512Mi"
+  queue: queue-workload-low-cpu

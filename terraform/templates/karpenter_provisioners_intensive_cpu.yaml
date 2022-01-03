@@ -4,7 +4,7 @@ metadata:
   name: "karpenter-provisioner-workload-intensive-cpu"
 spec:
   labels:
-    intent: "workload-intensive-cpu"
+    workload: "workload-intensive-cpu"
   requirements:
     - key: "node.kubernetes.io/instance-type"
       operator: In

@@ -4,11 +4,11 @@ metadata:
   name: "karpenter-provisioner-workload-low-cpu"
 spec:
   labels:
-    intent: "workload-low-cpu"
+    workload: "workload-low-cpu"
   requirements:
     - key: "node.kubernetes.io/instance-type"
       operator: In
-      values: ["t3a.large", "t3a.xlarge", "t3a.2xlarge", "t3a.4xlarge", "t3.large", "t3.xlarge", "t3.2xlarge", "t3.4xlarge"]
+      values: ["m5.xlarge", "m5a.xlarge"]
     - key: "kubernetes.io/arch"
       operator: In
       values: ["amd64"]

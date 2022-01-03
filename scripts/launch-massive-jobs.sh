@@ -32,7 +32,9 @@ PATH_TEMPLATE="scripts/templates"
 FILE_TEMPLATE="sparkapplication-default-template.yaml"
 
 for (( i=1; i<=${NUM_SPARK_JOBS}; i++ )); do
-    export UUID="sec${i}-$(cat /proc/sys/kernel/random/uuid)"
+    export UUID="sec${i}-$(cat /proc/sys/kernel/random/uuid | cut -c 1-8)"
 
     cat ${PATH_TEMPLATE}/${FILE_TEMPLATE} | envsubst | kubectl apply -f - &
+
+    sleep 2s
 done

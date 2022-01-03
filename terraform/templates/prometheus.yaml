@@ -147,12 +147,21 @@ alertmanager:
   ## Node labels for alertmanager pod assignment
   ## Ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
-  nodeSelector:
-    "node.kubernetes.io/lifecycle": "normal"
-
+  nodeSelector: {}
   ## Pod affinity
   ##
-  affinity: {}
+  affinity:
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - podAffinityTerm:
+            labelSelector:
+              matchExpressions:
+                - key: node-type
+                  operator: In
+                  values:
+                    - core
+            topologyKey: failure-domain.beta.kubernetes.io/zone
+          weight: 100
 
   ## PodDisruptionBudget settings
   ## ref: https://kubernetes.io/docs/concepts/workloads/pods/disruptions/

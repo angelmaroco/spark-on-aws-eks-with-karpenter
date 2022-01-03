@@ -1,6 +1,15 @@
 ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
 # affinity -- Affinity for pod assignment
-affinity: {}
+affinity:
+  podAntiAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+    - labelSelector:
+        matchExpressions:
+        - key: node-type
+          operator: In
+          values:
+          - core
+      topologyKey: failure-domain.beta.kubernetes.io/zone
 
 autoDiscovery:
   # cloudProviders `aws`, `gce` and `magnum` are supported by auto-discovery at this time
@@ -140,7 +149,7 @@ extraArgs:
   v: 4
   # write-status-configmap: true
   # status-config-map-name: cluster-autoscaler-status
-  leader-elect: false
+  leader-elect: true
   # leader-elect-resource-lock: endpoints
   # skip-nodes-with-local-storage: true
   # expander: random
@@ -222,8 +231,7 @@ kubeTargetVersionOverride: ""
 nameOverride: ""
 
 # nodeSelector -- Node labels for pod assignment. Ref: https://kubernetes.io/docs/user-guide/node-selection/.
-nodeSelector: {
-}
+nodeSelector: {}
 
 # podAnnotations -- Annotations to add to each pod.
 podAnnotations: {}
@@ -259,7 +267,7 @@ rbac:
     automountServiceAccountToken: true
 
 # replicaCount -- Desired number of pods
-replicaCount: 1
+replicaCount: 3
 
 # resources -- Pod resource requests and limits.
 resources: {}

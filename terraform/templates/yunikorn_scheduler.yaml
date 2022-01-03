@@ -64,6 +64,19 @@ resources:
 # Once the admission controller is installed, all traffic will be routing to yunikorn.
 embedAdmissionController: true
 
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+              - key: node-type
+                operator: In
+                values:
+                  - core
+          topologyKey: failure-domain.beta.kubernetes.io/zone
+        weight: 100
+
 # Use this configuration to automatically map K8s namespaces to yunikorn queues
 configuration: |
   partitions:

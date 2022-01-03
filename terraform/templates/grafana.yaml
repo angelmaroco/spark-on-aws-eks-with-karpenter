@@ -159,8 +159,7 @@ resources: {}
 ## Node labels for pod assignment
 ## ref: https://kubernetes.io/docs/user-guide/node-selection/
 #
-nodeSelector:
-  "node.kubernetes.io/lifecycle": "normal"
+nodeSelector: {}
 ## Tolerations for pod assignment
 ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
 ##
@@ -169,7 +168,18 @@ tolerations: []
 ## Affinity for pod assignment
 ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
 ##
-affinity: {}
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+              - key: node-type
+                operator: In
+                values:
+                  - core
+          topologyKey: failure-domain.beta.kubernetes.io/zone
+        weight: 100
 
 extraInitContainers: []
 

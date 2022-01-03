@@ -11,7 +11,7 @@ resource "helm_release" "karpenter" {
   repository       = "https://charts.karpenter.sh"
   chart            = "karpenter"
   version          = "0.5.3"
-  timeout          = 600
+  timeout          = 300
 
   set {
     name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
