@@ -21,9 +21,9 @@ fi
 
 AWS_ECR_URI="${AWS_ACCOUNT}.dkr.ecr.${AWS_REGION}.amazonaws.com"
 
-IMAGE_SOURCE="ghcr.io/tripl-ai/arc:arc_3.10.0_spark_3.0.3_scala_2.12_hadoop_3.2.0_1.0.0"
+IMAGE_SOURCE="angelmaroco/spark:3.2.0-hadoop-3.2-aws-sdk-1.12.132-python-3.8"
 
-IMAGE_TARGET_TAG="3.0.3"
+IMAGE_TARGET_TAG="3.2.0"
 ECR_REPOSITORY="spark-custom"
 IMAGE_TARGET="${AWS_ECR_URI}/${ECR_REPOSITORY}:${IMAGE_TARGET_TAG}"
 
