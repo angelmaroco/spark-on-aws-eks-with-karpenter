@@ -51,7 +51,7 @@ aws_baseline_eks = {
   worker_groups_suspended_processes  = ["AZRebalance"]
 
   worker_groups_spark_driver_low_cpu_name                 = "spark-group-driver-workload-low-cpu-on-demand"
-  worker_groups_spark_driver_low_cpu_instance_type        = ["m5.xlarge", "m5a.xlarge"]
+  worker_groups_spark_driver_low_cpu_instance_type        = ["m5.large", "m5a.large"]
   worker_groups_spark_driver_low_cpu_additional_userdata  = ""
   worker_groups_spark_driver_low_cpu_asg_desired_capacity = 1
   worker_groups_spark_driver_low_cpu_asg_max_size         = 10
