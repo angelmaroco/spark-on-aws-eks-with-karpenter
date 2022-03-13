@@ -19,9 +19,11 @@ aws eks get-token --cluster-name ${EKS_CLUSTER}
 kubectl port-forward service/grafana 3000:80 -n monitoring &
 kubectl port-forward service/kubernetes-dashboard 3001:443 -n monitoring &
 kubectl port-forward service/spark-history-server 3002:18080 -n monitoring &
+kubectl port-forward service/proxy-public 3003:80 -n jupyterhub &
 
 
 # Open browser
 xdg-open http://localhost:3000
 xdg-open https://localhost:3001
 xdg-open http://localhost:3002
+xdg-open http://localhost:3003

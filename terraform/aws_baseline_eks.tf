@@ -1,5 +1,5 @@
 locals {
-  worker_groups_tags_core = [
+  worker_groups_core_tags = [
     {
       "key"                 = "k8s.io/cluster-autoscaler/enabled"
       "propagate_at_launch" = "true"
@@ -12,7 +12,7 @@ locals {
     }
   ]
 
-  worker_groups_tags_spark = [
+  worker_groups_spark_driver_tags = [
     {
       "key"                 = "k8s.io/cluster-autoscaler/enabled"
       "propagate_at_launch" = "true"
@@ -31,12 +31,12 @@ locals {
     {
       "key"                 = "k8s.io/cluster-autoscaler/node-template/label/workload"
       "propagate_at_launch" = "true"
-      "value"               = "workload-low-cpu"
+      "value"               = "workload-low-cpu-driver"
     },
     {
       "key"                 = "workload"
       "propagate_at_launch" = "true"
-      "value"               = "workload-low-cpu"
+      "value"               = "workload-low-cpu-driver"
     }
   ]
 }
@@ -79,32 +79,19 @@ module "eks" {
       kubelet_extra_args            = var.aws_baseline_eks.worker_groups_kubelet_extra_args
       suspended_processes           = var.aws_baseline_eks.worker_groups_suspended_processes
       additional_security_group_ids = [module.sg_eks_worker_group_on_demand.this_security_group_id]
-      tags                          = local.worker_groups_tags_core
+      tags                          = local.worker_groups_core_tags
     },
     {
-      name                          = var.aws_baseline_eks.worker_groups_spot_name
-      instance_type                 = var.aws_baseline_eks.worker_groups_spot_instance_type
-      additional_userdata           = var.aws_baseline_eks.worker_groups_spot_additional_userdata
-      asg_desired_capacity          = var.aws_baseline_eks.worker_groups_spot_asg_desired_capacity
-      asg_max_size                  = var.aws_baseline_eks.worker_groups_spot_asg_max_size
-      asg_min_size                  = var.aws_baseline_eks.worker_groups_spot_asg_min_size
-      kubelet_extra_args            = var.aws_baseline_eks.worker_groups_spot_kubelet_extra_args
-      suspended_processes           = var.aws_baseline_eks.worker_groups_spot_suspended_processes
-      additional_security_group_ids = [module.sg_eks_worker_group_spot.this_security_group_id]
-      tags                          = local.worker_groups_tags_core
-    },
-    {
-      name                          = var.aws_baseline_eks.worker_groups_spark_low_cpu_name
-      override_instance_types       = var.aws_baseline_eks.worker_groups_spark_low_cpu_instance_type
-      additional_userdata           = var.aws_baseline_eks.worker_groups_spark_low_cpu_additional_userdata
-      spot_instance_pools           = 4
-      asg_desired_capacity          = var.aws_baseline_eks.worker_groups_spark_low_cpu_asg_desired_capacity
-      asg_max_size                  = var.aws_baseline_eks.worker_groups_spark_low_cpu_asg_max_size
-      asg_min_size                  = var.aws_baseline_eks.worker_groups_spark_low_cpu_asg_min_size
-      kubelet_extra_args            = var.aws_baseline_eks.worker_groups_spark_low_cpu_kubelet_extra_args
-      suspended_processes           = var.aws_baseline_eks.worker_groups_spark_low_cpu_suspended_processes
+      name                          = var.aws_baseline_eks.worker_groups_spark_driver_low_cpu_name
+      override_instance_types       = var.aws_baseline_eks.worker_groups_spark_driver_low_cpu_instance_type
+      additional_userdata           = var.aws_baseline_eks.worker_groups_spark_driver_low_cpu_additional_userdata
+      asg_desired_capacity          = var.aws_baseline_eks.worker_groups_spark_driver_low_cpu_asg_desired_capacity
+      asg_max_size                  = var.aws_baseline_eks.worker_groups_spark_driver_low_cpu_asg_max_size
+      asg_min_size                  = var.aws_baseline_eks.worker_groups_spark_driver_low_cpu_asg_min_size
+      kubelet_extra_args            = var.aws_baseline_eks.worker_groups_spark_driver_low_cpu_kubelet_extra_args
+      suspended_processes           = var.aws_baseline_eks.worker_groups_spark_driver_low_cpu_suspended_processes
       additional_security_group_ids = [module.sg_eks_worker_group_spark_low_cpu.this_security_group_id]
-      tags                          = local.worker_groups_tags_spark
+      tags                          = local.worker_groups_spark_driver_tags
     }
 
   ]

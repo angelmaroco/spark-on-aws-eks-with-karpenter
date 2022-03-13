@@ -50,7 +50,7 @@ data "aws_iam_policy_document" "spark-custom-policy-document" {
 
 resource "null_resource" "build-and-push-ecr" {
   provisioner "local-exec" {
-    command = "../scripts/build-spark-image.sh -a ${data.aws_caller_identity.current.account_id} -r ${data.aws_region.current.name}"
+    command = "../build/ecr/build-spark-image.sh -a ${data.aws_caller_identity.current.account_id} -r ${data.aws_region.current.name}"
   }
 
   depends_on = [

@@ -4,7 +4,7 @@
 
 # replicaCount -- Desired number of pods, leaderElection will be enabled
 # if this is greater than 1
-replicaCount: 3
+replicaCount: 1
 
 image:
   repository: duyetdev/spark-operator
@@ -50,15 +50,15 @@ serviceAccounts:
 sparkJobNamespace: ""
 
 # -- Operator concurrency, higher values might increase memory usage
-controllerThreads: 10
+controllerThreads: 30
 
 # -- Operator resync interval. Note that the operator will respond to events (e.g. create, update)
 # unrelated to this setting
-resyncInterval: 30
+resyncInterval: 15
 
 uiService:
   # -- Enable UI service creation for Spark application
-  enable: true
+  enable: false
 
 # -- Ingress URL format.
 # Requires the UI service to be enabled by setting `uiService.enable` to true.
@@ -149,11 +149,11 @@ podLabels: {}
 # 'failed to run spark-submit for SparkApplication [...]: signal: killed' - when this happens, you may want to increase memory limits.
 resources: {}
   # limits:
-  #   cpu: 100m
-  #   memory: 300Mi
+  #   cpu: 1000m
+  #   memory: 1000Mi
   # requests:
-  #   cpu: 100m
-  #   memory: 300Mi
+  #   cpu: 500m
+  #   memory: 500Mi
 
 batchScheduler:
   # -- Enable batch scheduler for spark jobs scheduling. If enabled, users can specify batch scheduler name in spark application

@@ -10,7 +10,7 @@ resource "helm_release" "karpenter" {
   name             = "karpenter"
   repository       = "https://charts.karpenter.sh"
   chart            = "karpenter"
-  version          = "0.5.3"
+  version          = "v0.6.3"
   timeout          = 300
 
   set {
@@ -19,13 +19,18 @@ resource "helm_release" "karpenter" {
   }
 
   set {
-    name  = "controller.clusterName"
+    name  = "clusterName"
     value = module.eks.cluster_id
   }
 
   set {
-    name  = "controller.clusterEndpoint"
+    name  = "clusterEndpoint"
     value = module.eks.cluster_endpoint
+  }
+
+  set {
+    name  = "aws.defaultInstanceProfile"
+    value = aws_iam_instance_profile.karpenter.name
   }
 }
 
@@ -78,6 +83,7 @@ resource "aws_iam_role_policy" "karpenter_contoller" {
           "iam:PassRole",
           "ec2:TerminateInstances",
           "ec2:DescribeLaunchTemplates",
+          "ec2:DeleteLaunchTemplate",
           "ec2:DescribeInstances",
           "ec2:DescribeSecurityGroups",
           "ec2:DescribeSubnets",

@@ -38,8 +38,6 @@ spec:
         path: "/tmp"
         type: Directory
   timeToLiveSeconds: 5
-  nodeSelector:
-    "workload": "${TYPE_WORKLOAD}"
   driver:
     cores: 1
     memory: "512m"
@@ -49,6 +47,15 @@ spec:
     volumeMounts:
       - name: "spark-volume-testing-${UUID}"
         mountPath: "/tmp"
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            - key: workload
+              operator: In
+              values:
+              - "${TYPE_WORKLOAD}-driver"
   executor:
     cores: 1
     instances: 2
@@ -59,3 +66,12 @@ spec:
     volumeMounts:
       - name: "spark-volume-testing-${UUID}"
         mountPath: "/tmp"
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            - key: workload
+              operator: In
+              values:
+              - "${TYPE_WORKLOAD}"
