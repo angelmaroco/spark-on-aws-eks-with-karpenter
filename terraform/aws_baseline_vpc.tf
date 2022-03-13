@@ -51,6 +51,12 @@ module "endpoints" {
       subnet_ids          = module.aws_baseline_vpc.private_subnets
       tags                = { Name = "${var.tags.project}-${var.tags.environment}-ecr-dkr-vpc-endpoint" }
     }
+    ecr_api = {
+      service             = "ecr.api"
+      private_dns_enabled = true
+      subnet_ids          = module.aws_baseline_vpc.private_subnets
+      tags                = { Name = "${var.tags.project}-${var.tags.environment}-ecr-api-vpc-endpoint" }
+    }
   }
 
   depends_on = [aws_security_group.non_default]
