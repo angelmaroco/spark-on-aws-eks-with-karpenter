@@ -39,7 +39,7 @@ resource "helm_release" "jupyterhub" {
   repository       = "https://jupyterhub.github.io/helm-chart/"
   chart            = "jupyterhub"
   version          = "1.2.0"
-  timeout          = 300
+  timeout          = 100
 
   values = [data.local_file.helm_chart_jupyterhub.content]
 }

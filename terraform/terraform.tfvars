@@ -41,14 +41,14 @@ aws_baseline_eks = {
   attach_worker_cni_policy        = true
   cluster_enabled_log_types       = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 
-  worker_groups_name                 = "core-group-on-demand"
-  worker_groups_instance_type        = "m5a.large"
-  worker_groups_additional_userdata  = ""
-  worker_groups_asg_desired_capacity = 3
-  worker_groups_asg_max_size         = 5
-  worker_groups_asg_min_size         = 3
-  worker_groups_kubelet_extra_args   = "--node-labels=node.kubernetes.io/lifecycle=normal,node-type=core"
-  worker_groups_suspended_processes  = ["AZRebalance"]
+  worker_groups_core_name                 = "core-group-on-demand"
+  worker_groups_core_instance_type        = "m5a.large"
+  worker_groups_core_additional_userdata  = ""
+  worker_groups_core_asg_desired_capacity = 1
+  worker_groups_core_asg_max_size         = 2
+  worker_groups_core_asg_min_size         = 1
+  worker_groups_core_kubelet_extra_args   = "--node-labels=node.kubernetes.io/lifecycle=normal,node-type=core"
+  worker_groups_core_suspended_processes  = ["AZRebalance"]
 
   worker_groups_spark_driver_low_cpu_name                 = "spark-group-driver-workload-low-cpu-on-demand"
   worker_groups_spark_driver_low_cpu_instance_type        = ["m5.large", "m5a.large"]
@@ -58,6 +58,16 @@ aws_baseline_eks = {
   worker_groups_spark_driver_low_cpu_asg_min_size         = 1
   worker_groups_spark_driver_low_cpu_kubelet_extra_args   = "--node-labels=node.kubernetes.io/lifecycle=normal,workload=workload-low-cpu-driver"
   worker_groups_spark_driver_low_cpu_suspended_processes  = ["AZRebalance"]
+
+
+  worker_groups_jupyterhub_name                 = "jupyterhub-group-on-demand"
+  worker_groups_jupyterhub_instance_type        = ["t3.medium", "t3a.medium"]
+  worker_groups_jupyterhub_additional_userdata  = ""
+  worker_groups_jupyterhub_asg_desired_capacity = 1
+  worker_groups_jupyterhub_asg_max_size         = 1
+  worker_groups_jupyterhub_asg_min_size         = 1
+  worker_groups_jupyterhub_kubelet_extra_args   = "--node-labels=node.kubernetes.io/lifecycle=normal,node-type=core-jupyterhub"
+  worker_groups_jupyterhub_suspended_processes  = ["AZRebalance"]
 }
 
 aws_baseline_s3_spark = {

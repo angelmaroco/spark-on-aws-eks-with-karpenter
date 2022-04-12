@@ -12,6 +12,19 @@ locals {
     }
   ]
 
+  worker_groups_core_jupyterhub_tags = [
+    {
+      "key"                 = "k8s.io/cluster-autoscaler/enabled"
+      "propagate_at_launch" = "true"
+      "value"               = "false"
+    },
+    {
+      "key"                 = "node-type"
+      "propagate_at_launch" = "true"
+      "value"               = "core-jupyterhub"
+    }
+  ]
+
   worker_groups_spark_driver_tags = [
     {
       "key"                 = "k8s.io/cluster-autoscaler/enabled"
@@ -70,14 +83,14 @@ module "eks" {
 
   worker_groups_launch_template = [
     {
-      name                          = var.aws_baseline_eks.worker_groups_name
-      instance_type                 = var.aws_baseline_eks.worker_groups_instance_type
-      additional_userdata           = var.aws_baseline_eks.worker_groups_additional_userdata
-      asg_desired_capacity          = var.aws_baseline_eks.worker_groups_asg_desired_capacity
-      asg_max_size                  = var.aws_baseline_eks.worker_groups_asg_max_size
-      asg_min_size                  = var.aws_baseline_eks.worker_groups_asg_min_size
-      kubelet_extra_args            = var.aws_baseline_eks.worker_groups_kubelet_extra_args
-      suspended_processes           = var.aws_baseline_eks.worker_groups_suspended_processes
+      name                          = var.aws_baseline_eks.worker_groups_core_name
+      instance_type                 = var.aws_baseline_eks.worker_groups_core_instance_type
+      additional_userdata           = var.aws_baseline_eks.worker_groups_core_additional_userdata
+      asg_desired_capacity          = var.aws_baseline_eks.worker_groups_core_asg_desired_capacity
+      asg_max_size                  = var.aws_baseline_eks.worker_groups_core_asg_max_size
+      asg_min_size                  = var.aws_baseline_eks.worker_groups_core_asg_min_size
+      kubelet_extra_args            = var.aws_baseline_eks.worker_groups_core_kubelet_extra_args
+      suspended_processes           = var.aws_baseline_eks.worker_groups_core_suspended_processes
       additional_security_group_ids = [module.sg_eks_worker_group_on_demand.this_security_group_id]
       tags                          = local.worker_groups_core_tags
     },
@@ -92,6 +105,19 @@ module "eks" {
       suspended_processes           = var.aws_baseline_eks.worker_groups_spark_driver_low_cpu_suspended_processes
       additional_security_group_ids = [module.sg_eks_worker_group_spark_low_cpu.this_security_group_id]
       tags                          = local.worker_groups_spark_driver_tags
+    },
+
+    {
+      name                          = var.aws_baseline_eks.worker_groups_jupyterhub_name
+      override_instance_types       = var.aws_baseline_eks.worker_groups_jupyterhub_instance_type
+      additional_userdata           = var.aws_baseline_eks.worker_groups_jupyterhub_additional_userdata
+      asg_desired_capacity          = var.aws_baseline_eks.worker_groups_jupyterhub_asg_desired_capacity
+      asg_max_size                  = var.aws_baseline_eks.worker_groups_jupyterhub_asg_max_size
+      asg_min_size                  = var.aws_baseline_eks.worker_groups_jupyterhub_asg_min_size
+      kubelet_extra_args            = var.aws_baseline_eks.worker_groups_jupyterhub_kubelet_extra_args
+      suspended_processes           = var.aws_baseline_eks.worker_groups_jupyterhub_suspended_processes
+      additional_security_group_ids = [module.sg_eks_worker_group_spark_low_cpu.this_security_group_id]
+      tags                          = local.worker_groups_core_jupyterhub_tags
     }
 
   ]

@@ -46,7 +46,8 @@ hub:
   cookieSecret:
   initContainers: []
   fsGid: 1000
-  nodeSelector: {}
+  nodeSelector:
+    node-type: core-jupyterhub
   tolerations: []
   concurrentSpawnLimit: 64
   consecutiveFailureLimit: 5
@@ -60,7 +61,7 @@ hub:
     ##   deployment of JupyterHub on k8s is to be possible.
     type: Recreate
   db:
-    type: sqlite-pvc
+    type: sqlite-memory
     upgrade:
     pvc:
       annotations: {}
@@ -69,7 +70,7 @@ hub:
         - ReadWriteOnce
       storage: 1Gi
       subPath:
-      storageClassName:
+      storageClassName: ""
     url:
     password:
   labels: {}
@@ -215,7 +216,8 @@ proxy:
     defaultTarget:
     errorTarget:
     extraEnv: {}
-    nodeSelector: {}
+    nodeSelector:
+      node-type: core-jupyterhub
     tolerations: []
     networkPolicy:
       enabled: true
@@ -254,7 +256,8 @@ proxy:
     extraVolumeMounts: []
     extraStaticConfig: {}
     extraDynamicConfig: {}
-    nodeSelector: {}
+    nodeSelector:
+      node-type: core-jupyterhub
     tolerations: []
     extraPorts: []
     networkPolicy:
@@ -307,7 +310,8 @@ proxy:
 singleuser:
   podNameTemplate:
   extraTolerations: []
-  nodeSelector: {}
+  nodeSelector:
+    workload: "workload-jupyterhub-user"
   extraNodeAffinity:
     required: []
     preferred: []
@@ -436,7 +440,8 @@ scheduling:
       tag: v1.19.13 # ref: https://github.com/kubernetes/website/blob/main/content/en/releases/patch-releases.md
       pullPolicy:
       pullSecrets: []
-    nodeSelector: {}
+    nodeSelector:
+        node-type: core-jupyterhub
     tolerations: []
     pdb:
       enabled: true
@@ -504,7 +509,7 @@ prePuller:
   extraTolerations: []
   # hook relates to the hook-image-awaiter Job and hook-image-puller DaemonSet
   hook:
-    enabled: true
+    enabled: false
     pullOnlyOnChanges: true
     # image and the configuration below relates to the hook-image-awaiter Job
     image:
@@ -517,13 +522,14 @@ prePuller:
       runAsGroup: 65534 # nobody group
       allowPrivilegeEscalation: false
     podSchedulingWaitDuration: 10
-    nodeSelector: {}
+    nodeSelector:
+      node-type: core-jupyterhub
     tolerations: []
     resources: {}
     serviceAccount:
       annotations: {}
   continuous:
-    enabled: true
+    enabled: false
   pullProfileListImages: true
   extraImages: {}
   pause:

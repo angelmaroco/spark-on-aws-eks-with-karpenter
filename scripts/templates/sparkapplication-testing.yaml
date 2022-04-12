@@ -23,7 +23,7 @@ spec:
   pythonVersion: "3"
   mode: cluster
   image: "${AWS_ACCOUNT}.dkr.ecr.${AWS_REGION}.amazonaws.com/spark-custom:3.2.0"
-  imagePullPolicy: Always
+  imagePullPolicy: IfNotPresent
   mainApplicationFile: "s3a://${AWS_S3_BUCKET_SPARK_UI}/data/src/jobs/example-001-csv2parquet.py"
   arguments: [
     "s3a://${AWS_S3_BUCKET_SPARK_UI}/data/files/dataset-example.csv",

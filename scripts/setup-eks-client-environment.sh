@@ -21,6 +21,7 @@ kubectl apply -f terraform/templates/karpenter_provisioners_low_cpu.yaml
 kubectl apply -f terraform/templates/karpenter_provisioners_moderate_cpu.yaml
 kubectl apply -f terraform/templates/karpenter_provisioners_intensive_cpu.yaml
 kubectl apply -f terraform/templates/karpenter_provisioners_intensive_memory.yaml
+kubectl apply -f terraform/templates/karpenter_provisioners_jupyterhub.yaml
 
 # Port forwarding
 kubectl port-forward service/grafana 3000:80 -n monitoring &

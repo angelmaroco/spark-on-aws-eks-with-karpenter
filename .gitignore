@@ -30,3 +30,4 @@ override.tf.json
 
 .terraform.lock.hcl
 kubeconfig_*
+/terraform/.infracost/.infracost-cache
