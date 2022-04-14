@@ -4,6 +4,10 @@ resource "kubernetes_namespace" "karpenter" {
   }
 }
 
+data "local_file" "helm_chart_karpenter" {
+  filename = "${path.module}/templates/karpenter.yaml"
+}
+
 resource "helm_release" "karpenter" {
   namespace        = kubernetes_namespace.karpenter.metadata.0.name
   create_namespace = false
@@ -12,6 +16,8 @@ resource "helm_release" "karpenter" {
   chart            = "karpenter"
   version          = "v0.8.2"
   timeout          = 300
+
+  values = [data.local_file.helm_chart_karpenter.content]
 
   set {
     name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"

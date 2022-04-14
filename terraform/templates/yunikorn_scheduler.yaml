@@ -70,7 +70,18 @@ admissionController:
       memory: 500Mi
   nodeSelector: {}
   tolerations: []
-  affinity: {}
+  affinity:
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - podAffinityTerm:
+            labelSelector:
+              matchExpressions:
+                - key: node-type
+                  operator: In
+                  values:
+                    - core
+            topologyKey: failure-domain.beta.kubernetes.io/zone
+          weight: 100
   service:
     type: ClusterIP
 
@@ -119,8 +130,7 @@ enableSchedulerPlugin: true
 # Use this configuration to automatically map K8s namespaces to yunikorn queues
 configuration: |
   partitions:
-    -
-      name: default
+    - name: default
       placementrules:
         - name: tag
           value: namespace
@@ -130,3 +140,20 @@ configuration: |
           submitacl: '*'
           properties:
             application.sort.policy: fifo
+          queues:
+            - name: default
+              resources:
+                guaranteed:
+                  memory: 500000
+                  vcore: 50000
+                max:
+                  memory: 800000
+                  vcore: 80000
+            - name: spark
+              resources:
+                guaranteed:
+                  memory: 100000
+                  vcore: 10000
+                max:
+                  memory: 100000
+                  vcore: 10000

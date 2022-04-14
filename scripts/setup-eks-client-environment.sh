@@ -17,10 +17,6 @@ aws eks update-kubeconfig --name ${EKS_CLUSTER} --region ${AWS_REGION}
 aws eks get-token --cluster-name ${EKS_CLUSTER}
 
 # Apply Karpenter configuration
-kubectl apply -f terraform/templates/karpenter_provisioners_low_cpu.yaml
-kubectl apply -f terraform/templates/karpenter_provisioners_moderate_cpu.yaml
-kubectl apply -f terraform/templates/karpenter_provisioners_intensive_cpu.yaml
-kubectl apply -f terraform/templates/karpenter_provisioners_intensive_memory.yaml
 kubectl apply -f terraform/templates/karpenter_provisioners_jupyterhub.yaml
 
 # Port forwarding
@@ -28,9 +24,11 @@ kubectl port-forward service/grafana 3000:80 -n monitoring &
 kubectl port-forward service/kubernetes-dashboard 3001:443 -n monitoring &
 kubectl port-forward service/spark-history-server 3002:18080 -n monitoring &
 kubectl port-forward service/proxy-public 3003:80 -n jupyterhub &
+kubectl port-forward service/yunikorn-service 3004:9889 -n yunikorn &
 
 # Open browser
 xdg-open http://localhost:3000
 xdg-open https://localhost:3001
 xdg-open http://localhost:3002
 xdg-open http://localhost:3003
+xdg-open http://localhost:3004

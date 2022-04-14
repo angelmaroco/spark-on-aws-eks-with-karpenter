@@ -94,6 +94,7 @@
 | [local_file.helm_chart_dashboard](https://registry.terraform.io/providers/hashicorp/local/latest/docs/data-sources/file) | data source |
 | [local_file.helm_chart_grafana](https://registry.terraform.io/providers/hashicorp/local/latest/docs/data-sources/file) | data source |
 | [local_file.helm_chart_jupyterhub](https://registry.terraform.io/providers/hashicorp/local/latest/docs/data-sources/file) | data source |
+| [local_file.helm_chart_karpenter](https://registry.terraform.io/providers/hashicorp/local/latest/docs/data-sources/file) | data source |
 | [local_file.helm_chart_spark_history_server](https://registry.terraform.io/providers/hashicorp/local/latest/docs/data-sources/file) | data source |
 | [local_file.helm_chart_spark_operator](https://registry.terraform.io/providers/hashicorp/local/latest/docs/data-sources/file) | data source |
 | [local_file.helm_chart_yunikorn](https://registry.terraform.io/providers/hashicorp/local/latest/docs/data-sources/file) | data source |

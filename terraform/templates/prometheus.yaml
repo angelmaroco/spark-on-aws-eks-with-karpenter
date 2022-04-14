@@ -176,22 +176,12 @@ alertmanager:
   ## Node labels for alertmanager pod assignment
   ## Ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
-  nodeSelector: {}
+  nodeSelector:
+    node-type: core
 
   ## Pod affinity
   ##
-  affinity:
-    podAntiAffinity:
-      preferredDuringSchedulingIgnoredDuringExecution:
-        - podAffinityTerm:
-            labelSelector:
-              matchExpressions:
-                - key: node-type
-                  operator: In
-                  values:
-                    - core
-            topologyKey: failure-domain.beta.kubernetes.io/zone
-          weight: 100
+  affinity: {}
 
 
   ## PodDisruptionBudget settings
@@ -566,7 +556,8 @@ nodeExporter:
   ## Node labels for node-exporter pod assignment
   ## Ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
-  nodeSelector: {}
+  nodeSelector:
+    node-type: core
 
   ## Annotations to be added to node-exporter pods
   ##
@@ -880,7 +871,8 @@ server:
   ## Node labels for Prometheus server pod assignment
   ## Ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
-  nodeSelector: {}
+  nodeSelector:
+    node-type: core
 
   ## Pod affinity
   ##
@@ -1221,7 +1213,8 @@ pushgateway:
   ## Node labels for pushgateway pod assignment
   ## Ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
-  nodeSelector: {}
+  nodeSelector:
+    node-type: core
 
   ## Annotations to be added to pushgateway pods
   ##

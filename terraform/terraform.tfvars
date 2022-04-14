@@ -42,7 +42,7 @@ aws_baseline_eks = {
   cluster_enabled_log_types       = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 
   worker_groups_core_name                 = "core-group-on-demand"
-  worker_groups_core_instance_type        = "m5a.large"
+  worker_groups_core_instance_type        = "m5a.xlarge"
   worker_groups_core_additional_userdata  = ""
   worker_groups_core_asg_desired_capacity = 1
   worker_groups_core_asg_max_size         = 2

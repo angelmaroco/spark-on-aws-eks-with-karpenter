@@ -19,6 +19,11 @@ locals {
       "value"               = "false"
     },
     {
+      "key"                 = "k8s.io/cluster-autoscaler/${local.name}"
+      "propagate_at_launch" = "true"
+      "value"               = "owned"
+    },
+    {
       "key"                 = "node-type"
       "propagate_at_launch" = "true"
       "value"               = "core-jupyterhub"
