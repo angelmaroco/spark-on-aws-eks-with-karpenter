@@ -19,4 +19,11 @@ resource "helm_release" "yunikorn" {
   timeout          = 300
 
   values = [data.local_file.helm_chart_yunikorn.content]
+
+  depends_on = [
+    helm_release.grafana,
+    helm_release.prometheus,
+    helm_release.kubernetes-dashboard,
+    helm_release.spark-history-server
+  ]
 }

@@ -25,7 +25,8 @@ resource "helm_release" "prometheus" {
   chart      = "prometheus"
   name       = "prometheus"
   namespace  = kubernetes_namespace.monitoring.metadata.0.name
-  repository = "https://charts.helm.sh/stable"
+  repository = "https://prometheus-community.github.io/helm-charts"
+  version    = "15.8.1"
   timeout    = 600
 
   values = [data.template_file.file.rendered]
@@ -35,7 +36,8 @@ resource "helm_release" "grafana" {
   chart      = "grafana"
   name       = "grafana"
   namespace  = kubernetes_namespace.monitoring.metadata.0.name
-  repository = "https://charts.helm.sh/stable"
+  repository = "https://grafana.github.io/helm-charts"
+  version    = "6.26.2"
   timeout    = 600
 
   values = [data.local_file.helm_chart_grafana.content]
@@ -65,8 +67,8 @@ resource "helm_release" "kubernetes-dashboard" {
   repository = "https://kubernetes.github.io/dashboard/"
   chart      = "kubernetes-dashboard"
   namespace  = kubernetes_namespace.monitoring.metadata.0.name
-
-  values = [data.local_file.helm_chart_dashboard.content]
+  version    = "5.4.1"
+  values     = [data.local_file.helm_chart_dashboard.content]
 }
 
 resource "helm_release" "spark-history-server" {
