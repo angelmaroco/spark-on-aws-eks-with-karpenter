@@ -3,6 +3,10 @@ kind: SparkApplication
 metadata:
   name: example-workload-low-cpu-${UUID}
   namespace: default
+  labels:
+    app: spark-job-${UUID}
+    applicationId: example-workload-low-cpu-${UUID}
+    queue: root.default
 spec:
   sparkConf:
     "spark.hadoop.fs.s3a.impl": "org.apache.hadoop.fs.s3a.S3AFileSystem"
@@ -25,10 +29,11 @@ spec:
   image: "${AWS_ACCOUNT}.dkr.ecr.${AWS_REGION}.amazonaws.com/spark-custom:3.2.0"
   imagePullPolicy: IfNotPresent
   mainApplicationFile: "s3a://${AWS_S3_BUCKET_SPARK_UI}/data/src/jobs/example-001-csv2parquet.py"
-  arguments: [
-    "s3a://${AWS_S3_BUCKET_SPARK_UI}/data/files/dataset-example.csv",
-    "s3a://${AWS_S3_BUCKET_SPARK_UI}/output/dataset-example/"
-  ]
+  arguments:
+    [
+      "s3a://${AWS_S3_BUCKET_SPARK_UI}/data/files/dataset-example.csv",
+      "s3a://${AWS_S3_BUCKET_SPARK_UI}/output/dataset-example/",
+    ]
   sparkVersion: "3.2.0"
   restartPolicy:
     type: Never
@@ -38,40 +43,52 @@ spec:
         path: "/tmp"
         type: Directory
   timeToLiveSeconds: 5
+  batchScheduler: yunikorn
   driver:
     cores: 1
-    memory: "512m"
+    coreRequest: "850m"
+    memory: "2450m"
     labels:
       version: 3.2.0
     serviceAccount: spark
     volumeMounts:
       - name: "spark-volume-testing-${UUID}"
         mountPath: "/tmp"
-    affinity:
-      nodeAffinity:
-        requiredDuringSchedulingIgnoredDuringExecution:
-          nodeSelectorTerms:
-          - matchExpressions:
-            - key: workload
-              operator: In
-              values:
-              - "${TYPE_WORKLOAD}-driver"
+    annotations:
+      yunikorn.apache.org/schedulingPolicyParameters: "placeholderTimeoutSeconds=30"
+      yunikorn.apache.org/task-group-name: "spark-driver-${UUID}"
+      yunikorn.apache.org/task-groups: |-
+        [{
+          "name": "spark-driver-${UUID}",
+          "minMember": 1,
+          "minResource": {
+            "cpu": "850m",
+            "memory": "2450m"
+          },
+          "nodeSelector": {
+            "workload": "${TYPE_WORKLOAD}-driver"
+          }
+        },
+        {
+          "name": "spark-executor-${UUID}",
+          "minMember": 2,
+          "minResource": {
+            "cpu": "850m",
+            "memory": "2400m"
+          },
+          "nodeSelector": {
+            "workload": "${TYPE_WORKLOAD}-executor"
+          }
+        }]
   executor:
     cores: 1
     instances: 2
-    coreRequest: "500m"
-    memory: "1000m"
+    coreRequest: "850m"
+    memory: "2400m"
     labels:
       version: 3.2.0
     volumeMounts:
       - name: "spark-volume-testing-${UUID}"
         mountPath: "/tmp"
-    affinity:
-      nodeAffinity:
-        requiredDuringSchedulingIgnoredDuringExecution:
-          nodeSelectorTerms:
-          - matchExpressions:
-            - key: workload
-              operator: In
-              values:
-              - "${TYPE_WORKLOAD}"
+    annotations:
+      yunikorn.apache.org/task-group-name: "spark-executor-${UUID}"

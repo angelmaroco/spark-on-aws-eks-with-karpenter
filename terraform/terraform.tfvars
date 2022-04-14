@@ -53,12 +53,20 @@ aws_baseline_eks = {
   worker_groups_spark_driver_low_cpu_name                 = "spark-group-driver-workload-low-cpu-on-demand"
   worker_groups_spark_driver_low_cpu_instance_type        = ["m5.large", "m5a.large"]
   worker_groups_spark_driver_low_cpu_additional_userdata  = ""
-  worker_groups_spark_driver_low_cpu_asg_desired_capacity = 1
-  worker_groups_spark_driver_low_cpu_asg_max_size         = 10
-  worker_groups_spark_driver_low_cpu_asg_min_size         = 1
+  worker_groups_spark_driver_low_cpu_asg_desired_capacity = 0
+  worker_groups_spark_driver_low_cpu_asg_max_size         = 30
+  worker_groups_spark_driver_low_cpu_asg_min_size         = 0
   worker_groups_spark_driver_low_cpu_kubelet_extra_args   = "--node-labels=node.kubernetes.io/lifecycle=normal,workload=workload-low-cpu-driver"
   worker_groups_spark_driver_low_cpu_suspended_processes  = ["AZRebalance"]
 
+  worker_groups_spark_executor_low_cpu_name                 = "spark-group-executor-workload-low-cpu-on-spot"
+  worker_groups_spark_executor_low_cpu_instance_type        = ["m5.xlarge", "m5a.xlarge"]
+  worker_groups_spark_executor_low_cpu_additional_userdata  = ""
+  worker_groups_spark_executor_low_cpu_asg_desired_capacity = 0
+  worker_groups_spark_executor_low_cpu_asg_max_size         = 30
+  worker_groups_spark_executor_low_cpu_asg_min_size         = 0
+  worker_groups_spark_executor_low_cpu_kubelet_extra_args   = "--node-labels=node.kubernetes.io/lifecycle=spot,workload=workload-low-cpu-executor"
+  worker_groups_spark_executor_low_cpu_suspended_processes  = ["AZRebalance"]
 
   worker_groups_jupyterhub_name                 = "jupyterhub-group-on-demand"
   worker_groups_jupyterhub_instance_type        = ["t3.medium", "t3a.medium"]

@@ -29,7 +29,7 @@ export NUM_SPARK_JOBS=${NUM_SPARK_JOBS}
 export TYPE_WORKLOAD=${TYPE_WORKLOAD}
 
 PATH_TEMPLATE="scripts/templates"
-FILE_TEMPLATE="sparkapplication-testing.yaml"
+FILE_TEMPLATE="sparkapplication-testing-yunikorn.yaml"
 
 for (( i=1; i<=${NUM_SPARK_JOBS}; i++ )); do
     export UUID="sec${i}-$(cat /proc/sys/kernel/random/uuid | cut -c 1-8)"

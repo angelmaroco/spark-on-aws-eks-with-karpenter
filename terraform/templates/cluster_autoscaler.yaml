@@ -267,7 +267,7 @@ rbac:
     automountServiceAccountToken: true
 
 # replicaCount -- Desired number of pods
-replicaCount: 3
+replicaCount: 1
 
 # resources -- Pod resource requests and limits.
 resources: {}

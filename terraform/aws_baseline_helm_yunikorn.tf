@@ -13,9 +13,9 @@ resource "helm_release" "yunikorn" {
   namespace        = kubernetes_namespace.yunikorn.metadata.0.name
   create_namespace = false
   name             = "yunikorn"
-  repository       = "https://apache.github.io/incubator-yunikorn-release"
+  repository       = "https://apache.github.io/yunikorn-release"
   chart            = "yunikorn"
-  version          = "0.12.1"
+  version          = "0.12.2"
   timeout          = 300
 
   values = [data.local_file.helm_chart_yunikorn.content]
