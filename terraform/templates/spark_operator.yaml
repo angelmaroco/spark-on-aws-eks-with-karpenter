@@ -47,10 +47,10 @@ serviceAccounts:
     annotations: {}
 
 # -- Set this if running spark jobs in a different namespace than the operator
-sparkJobNamespace: ""
+sparkJobNamespace: "spark-apps"
 
 # -- Operator concurrency, higher values might increase memory usage
-controllerThreads: 30
+controllerThreads: 60
 
 # -- Operator resync interval. Note that the operator will respond to events (e.g. create, update)
 # unrelated to this setting
@@ -125,17 +125,14 @@ tolerations: []
 
 # affinity -- Affinity for pod assignment
 affinity:
-  podAntiAffinity:
-    preferredDuringSchedulingIgnoredDuringExecution:
-      - podAffinityTerm:
-          labelSelector:
-            matchExpressions:
-              - key: node-type
-                operator: In
-                values:
-                  - core
-          topologyKey: failure-domain.beta.kubernetes.io/zone
-        weight: 100
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: node-type
+          operator: In
+          values:
+          - core-scaling
 
 # podAnnotations -- Additional annotations to add to the pod
 podAnnotations: {}
@@ -149,8 +146,8 @@ podLabels: {}
 # 'failed to run spark-submit for SparkApplication [...]: signal: killed' - when this happens, you may want to increase memory limits.
 resources: {}
   # limits:
-  #   cpu: 1000m
-  #   memory: 1000Mi
+  #   cpu: 1500m
+  #   memory: 8000Mi
   # requests:
   #   cpu: 500m
   #   memory: 500Mi

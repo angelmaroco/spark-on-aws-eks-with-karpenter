@@ -1,15 +1,14 @@
 ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
 # affinity -- Affinity for pod assignment
 affinity:
-  podAntiAffinity:
+  nodeAffinity:
     requiredDuringSchedulingIgnoredDuringExecution:
-    - labelSelector:
-        matchExpressions:
+      nodeSelectorTerms:
+      - matchExpressions:
         - key: node-type
           operator: In
           values:
-          - core
-      topologyKey: failure-domain.beta.kubernetes.io/zone
+          - core-scaling
 
 autoDiscovery:
   # cloudProviders `aws`, `gce` and `magnum` are supported by auto-discovery at this time

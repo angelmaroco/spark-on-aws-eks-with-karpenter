@@ -14,7 +14,7 @@ resource "helm_release" "karpenter" {
   name             = "karpenter"
   repository       = "https://charts.karpenter.sh"
   chart            = "karpenter"
-  version          = "v0.8.2"
+  version          = "v0.16.3"
   timeout          = 300
 
   values = [data.local_file.helm_chart_karpenter.content]

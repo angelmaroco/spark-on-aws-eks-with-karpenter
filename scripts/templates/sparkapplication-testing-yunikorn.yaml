@@ -1,12 +1,12 @@
 apiVersion: "sparkoperator.k8s.io/v1beta2"
 kind: SparkApplication
 metadata:
-  name: example-workload-low-cpu-${UUID}
-  namespace: default
+  name: example-low-${UUID}
+  namespace: spark-apps
   labels:
     app: spark-job-${UUID}
-    applicationId: example-workload-low-cpu-${UUID}
-    queue: root.default
+    applicationId: example-low-${UUID}
+    queue: "root.spark-apps"
 spec:
   sparkConf:
     "spark.hadoop.fs.s3a.impl": "org.apache.hadoop.fs.s3a.S3AFileSystem"
@@ -20,9 +20,10 @@ spec:
     "spark.dynamicAllocation.shuffleTracking.timeout": "120"
     "spark.dynamicAllocation.minExecutors": "1"
     "spark.dynamicAllocation.maxExecutors": "2"
-    "spark.kubernetes.allocation.batch.size": "15"
     "spark.dynamicAllocation.executorAllocationRatio": "1"
     "spark.dynamicAllocation.schedulerBacklogTimeout": "1"
+    "spark.kubernetes.allocation.batch.size": "15"
+    "spark.kubernetes.driver.label.spark/app": "spark-job-${UUID}"
   type: Python
   pythonVersion: "3"
   mode: cluster
@@ -35,19 +36,23 @@ spec:
       "s3a://${AWS_S3_BUCKET_SPARK_UI}/output/dataset-example/",
     ]
   sparkVersion: "3.2.0"
-  restartPolicy:
-    type: Never
   volumes:
     - name: "spark-volume-testing-${UUID}"
       hostPath:
         path: "/tmp"
         type: Directory
   timeToLiveSeconds: 5
-  batchScheduler: yunikorn
+  batchScheduler: "yunikorn"
+  restartPolicy:
+    type: OnFailure
+    onFailureRetries: 3
+    onFailureRetryInterval: 10
+    onSubmissionFailureRetries: 5
+    onSubmissionFailureRetryInterval: 5
   driver:
     cores: 1
     coreRequest: "850m"
-    memory: "2450m"
+    memory: "2400m"
     labels:
       version: 3.2.0
     serviceAccount: spark
@@ -63,10 +68,27 @@ spec:
           "minMember": 1,
           "minResource": {
             "cpu": "850m",
-            "memory": "2450m"
+            "memory": "2400"
           },
-          "nodeSelector": {
-            "workload": "${TYPE_WORKLOAD}-driver"
+          "affinity": {
+              "nodeAffinity": {
+                "requiredDuringSchedulingIgnoredDuringExecution": {
+                    "nodeSelectorTerms": [
+                      {
+                          "matchExpressions": [
+                            {
+                                "key": "workload",
+                                "operator": "In",
+                                "values": [
+                                  "${TYPE_WORKLOAD}-driver"
+                                ]
+                            }
+                          ],
+                          "topologyKey": "topology.kubernetes.io/zone"
+                      }
+                    ]
+                }
+              }
           }
         },
         {
@@ -74,10 +96,27 @@ spec:
           "minMember": 2,
           "minResource": {
             "cpu": "850m",
-            "memory": "2400m"
+            "memory": "2400"
           },
-          "nodeSelector": {
-            "workload": "${TYPE_WORKLOAD}-executor"
+          "affinity": {
+              "nodeAffinity": {
+                "requiredDuringSchedulingIgnoredDuringExecution": {
+                    "nodeSelectorTerms": [
+                      {
+                          "matchExpressions": [
+                            {
+                                "key": "workload",
+                                "operator": "In",
+                                "values": [
+                                  "${TYPE_WORKLOAD}-executor"
+                                ]
+                            }
+                          ],
+                          "topologyKey": "topology.kubernetes.io/zone"
+                      }
+                    ]
+                }
+              }
           }
         }]
   executor:

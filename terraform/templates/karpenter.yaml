@@ -28,14 +28,20 @@ serviceMonitor:
   # -- Endpoint configuration for the ServiceMonitor.
   endpointConfig: {}
 # -- Number of replicas.
-replicas: 1
+replicas: 2
+# -- The number of old ReplicaSets to retain to allow rollback.
+revisionHistoryLimit: 10
 # -- Strategy for updating the pod.
 strategy:
-  type: Recreate
+  rollingUpdate:
+    maxUnavailable: 1
 # -- Additional labels for the pod.
 podLabels: {}
 # -- Additional annotations for the pod.
 podAnnotations: {}
+podDisruptionBudget:
+  name: karpenter
+  maxUnavailable: 1
 # -- SecurityContext for the pod.
 podSecurityContext:
   fsGroup: 1000
@@ -46,29 +52,57 @@ terminationGracePeriodSeconds:
 # -- Bind the pod to the host network.
 # This is required when using a custom CNI.
 hostNetwork: false
+# -- Configure the DNS Policy for the pod
+dnsPolicy: Default
+# -- Configure DNS Config for the pod
+dnsConfig: {}
+#  options:
+#    - name: ndots
+#      value: "1"
 # -- Node selectors to schedule the pod to nodes with labels.
 nodeSelector:
   kubernetes.io/os: linux
-  node-type: core
+  node-type: core-scaling
+
 # -- Affinity rules for scheduling the pod.
 affinity:
   nodeAffinity:
     requiredDuringSchedulingIgnoredDuringExecution:
       nodeSelectorTerms:
-        - matchExpressions:
-            - key: karpenter.sh/provisioner-name
-              operator: DoesNotExist
+      - matchExpressions:
+        - key: node-type
+          operator: In
+          values:
+          - core-scaling
+# -- topologySpreadConstraints to increase the controller resilience
+topologySpreadConstraints:
+  - maxSkew: 1
+    topologyKey: topology.kubernetes.io/zone
+    whenUnsatisfiable: ScheduleAnyway
 # -- Tolerations to allow the pod to be scheduled to nodes with taints.
-tolerations: []
+tolerations:
+  - key: CriticalAddonsOnly
+    operator: Exists
+# -- Additional volumes for the pod.
+extraVolumes: []
+# - name: aws-iam-token
+#   projected:
+#     defaultMode: 420
+#     sources:
+#     - serviceAccountToken:
+#         audience: sts.amazonaws.com
+#         expirationSeconds: 86400
+#         path: token
+
 controller:
   # -- Controller image.
-  image: "public.ecr.aws/karpenter/controller:v0.8.2@sha256:7779bf337cafe5080192f51819c5dc8a52ba6e7c4436ef9b2d164504d4ef8bea"
+  image: "public.ecr.aws/karpenter/controller:v0.16.3@sha256:68db4f092cf9cc83f5ef9e2fbc5407c2cb682e81f64dfaa700a7602ede38b1cf"
   # -- SecurityContext for the controller container.
   securityContext: {}
   # -- Additional environment variables for the controller pod.
   env: []
   # - name: AWS_REGION
-  # - value: eu-west-1
+  #   value: eu-west-1
 
   # -- Resources for the controller pod.
   resources:
@@ -82,9 +116,22 @@ controller:
   logLevel: ""
   # -- Controller log encoding, defaults to the global log encoding
   logEncoding: ""
+  # -- Additional volumeMounts for the controller pod.
+  extraVolumeMounts: []
+  # - name: aws-iam-token
+  #   mountPath: /var/run/secrets/eks.amazonaws.com/serviceaccount
+  #   readOnly: true
+
+  # The maximum length of a batch window. The longer this is, the more pods we can consider for provisioning at one
+  # time which usually results in fewer but larger nodes.
+  batchMaxDuration: 10s
+  # The maximum amount of time with no new ending pods that if exceeded ends the current batching window. If pods arrive
+  # faster than this time, the batching window will be extended up to the maxDuration. If they arrive slower, the pods
+  # will be batched separately.
+  batchIdleDuration: 1s
 webhook:
   # -- Webhook image.
-  image: "public.ecr.aws/karpenter/webhook:v0.8.2@sha256:22c4859490887b86b136aa6328cc951b252cc24d069ef30cc6c59892b1d59005"
+  image: "public.ecr.aws/karpenter/webhook:v0.16.3@sha256:96a2d9b06d6bc5127801f358f74b1cf2d289b423a2e9ba40c573c0b14b17dafa"
   # -- SecurityContext for the webhook container.
   securityContext: {}
   # -- The container port to use for the webhook.
@@ -92,20 +139,22 @@ webhook:
   # -- Additional environment variables for the webhook pod.
   env: []
   # - name: AWS_REGION
-  # - value: eu-west-1
+  #   value: eu-west-1
 
   # -- Resources for the webhook pod.
   resources:
     requests:
-      cpu: 100m
-      memory: 50Mi
+      cpu: 200m
+      memory: 100Mi
     limits:
-      cpu: 100m
-      memory: 50Mi
+      cpu: 200m
+      memory: 100Mi
   # -- Webhook log level, defaults to the global log level
   logLevel: ""
   # -- Webhook log encoding, defaults to the global log encoding
   logEncoding: ""
+  # -- Additional volumeMounts for the webhook pod.
+  extraVolumeMounts: []
 # -- Global log level
 logLevel: debug
 # -- Gloabl log encoding

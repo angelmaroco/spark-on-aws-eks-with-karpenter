@@ -8,6 +8,12 @@ resource "kubernetes_namespace" "spark-operator" {
   }
 }
 
+resource "kubernetes_namespace" "spark-apps" {
+  metadata {
+    name = "spark-apps"
+  }
+}
+
 resource "helm_release" "spark-operator" {
   chart      = "spark-operator"
   name       = "spark-operator"
@@ -21,7 +27,8 @@ resource "helm_release" "spark-operator" {
 
 resource "kubernetes_service_account" "spark-service-account" {
   metadata {
-    name = "spark"
+    namespace = "spark-apps"
+    name      = "spark"
   }
 }
 
@@ -37,6 +44,6 @@ resource "kubernetes_cluster_role_binding" "spark-cluster-role-binding" {
   subject {
     kind      = "ServiceAccount"
     name      = "spark"
-    namespace = "default"
+    namespace = "spark-apps"
   }
 }

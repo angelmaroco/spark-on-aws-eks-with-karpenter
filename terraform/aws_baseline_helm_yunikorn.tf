@@ -23,7 +23,6 @@ resource "helm_release" "yunikorn" {
   depends_on = [
     helm_release.grafana,
     helm_release.prometheus,
-    helm_release.kubernetes-dashboard,
-    helm_release.spark-history-server
+    helm_release.kubernetes-dashboard
   ]
 }

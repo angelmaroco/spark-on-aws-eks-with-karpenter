@@ -42,13 +42,22 @@ aws_baseline_eks = {
   cluster_enabled_log_types       = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 
   worker_groups_core_name                 = "core-group-on-demand"
-  worker_groups_core_instance_type        = "m5a.xlarge"
+  worker_groups_core_instance_type        = "m5.xlarge"
   worker_groups_core_additional_userdata  = ""
   worker_groups_core_asg_desired_capacity = 1
   worker_groups_core_asg_max_size         = 2
   worker_groups_core_asg_min_size         = 1
   worker_groups_core_kubelet_extra_args   = "--node-labels=node.kubernetes.io/lifecycle=normal,node-type=core"
   worker_groups_core_suspended_processes  = ["AZRebalance"]
+
+  worker_groups_core_scaling_name                 = "core-scaling-group-on-demand"
+  worker_groups_core_scaling_instance_type        = "m5.2xlarge"
+  worker_groups_core_scaling_additional_userdata  = ""
+  worker_groups_core_scaling_asg_desired_capacity = 1
+  worker_groups_core_scaling_asg_max_size         = 2
+  worker_groups_core_scaling_asg_min_size         = 1
+  worker_groups_core_scaling_kubelet_extra_args   = "--node-labels=node.kubernetes.io/lifecycle=normal,node-type=core-scaling"
+  worker_groups_core_scaling_suspended_processes  = ["AZRebalance"]
 
   worker_groups_spark_driver_low_cpu_name                 = "spark-group-driver-workload-low-cpu-on-demand"
   worker_groups_spark_driver_low_cpu_instance_type        = ["m5.large", "m5a.large"]

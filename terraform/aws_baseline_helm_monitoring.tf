@@ -71,37 +71,37 @@ resource "helm_release" "kubernetes-dashboard" {
   values     = [data.local_file.helm_chart_dashboard.content]
 }
 
-resource "helm_release" "spark-history-server" {
+# resource "helm_release" "spark-history-server" {
 
-  name = "spark-history-server"
+#   name = "spark-history-server"
 
-  repository = "https://charts.spot.io"
-  chart      = "spark-history-server"
-  version    = "1.5.0"
-  namespace  = kubernetes_namespace.monitoring.metadata.0.name
-  timeout    = 600
+#   repository = "https://inseefrlab.github.io/helm-charts-datascience"
+#   chart      = "inseefrlab/spark-history"
+#   version    = "4.0.5"
+#   namespace  = kubernetes_namespace.monitoring.metadata.0.name
+#   timeout    = 600
 
-  values = [data.local_file.helm_chart_spark_history_server.content]
+#   values = [data.local_file.helm_chart_spark_history_server.content]
 
-  set {
-    name  = "s3.enableS3"
-    value = "true"
-  }
-  set {
-    name  = "s3.enableIAM"
-    value = "true"
-  }
+#   set {
+#     name  = "s3.enableS3"
+#     value = "true"
+#   }
+#   set {
+#     name  = "s3.enableIAM"
+#     value = "true"
+#   }
 
-  set {
-    name  = "s3.secret"
-    value = "aws-secrets"
-  }
+#   set {
+#     name  = "s3.secret"
+#     value = "aws-secrets"
+#   }
 
-  set {
-    name  = "s3.logDirectory"
-    value = "s3a://${module.aws_baseline_s3_spark.bucket_id}/${var.aws_baseline_s3_spark.spark_ui_path}"
-  }
-}
+#   set {
+#     name  = "s3.logDirectory"
+#     value = "s3a://${module.aws_baseline_s3_spark.bucket_id}/${var.aws_baseline_s3_spark.spark_ui_path}"
+#   }
+# }
 
 data "kubernetes_service" "grafana" {
   depends_on = [
@@ -136,13 +136,13 @@ data "kubernetes_service" "kubernetes-dashboard" {
   }
 }
 
-data "kubernetes_service" "spark-history-server" {
-  depends_on = [
-    helm_release.spark-history-server
-  ]
+# data "kubernetes_service" "spark-history-server" {
+#   depends_on = [
+#     helm_release.spark-history-server
+#   ]
 
-  metadata {
-    namespace = helm_release.spark-history-server.namespace
-    name      = "spark-history-server"
-  }
-}
+#   metadata {
+#     namespace = helm_release.spark-history-server.namespace
+#     name      = "spark-history-server"
+#   }
+# }
