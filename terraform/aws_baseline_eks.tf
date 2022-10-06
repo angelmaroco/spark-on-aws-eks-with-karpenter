@@ -1,4 +1,14 @@
 locals {
+
+  private_subnet_az1_id   = [module.aws_baseline_vpc.private_subnets[0]]
+  private_subnet_az1_name = "az1"
+
+  private_subnet_az2_id   = [module.aws_baseline_vpc.private_subnets[1]]
+  private_subnet_az2_name = "az2"
+
+  private_subnet_az3_id   = [module.aws_baseline_vpc.private_subnets[2]]
+  private_subnet_az3_name = "az3"
+
   worker_groups_core_tags = [
     {
       "key"                 = "k8s.io/cluster-autoscaler/enabled"
@@ -129,7 +139,8 @@ module "eks" {
 
   worker_groups_launch_template = [
     {
-      name                          = var.aws_baseline_eks.worker_groups_core_name
+      name                          = "${var.aws_baseline_eks.worker_groups_core_name}-${local.private_subnet_az1_name}"
+      subnets                       = local.private_subnet_az1_id
       instance_type                 = var.aws_baseline_eks.worker_groups_core_instance_type
       additional_userdata           = var.aws_baseline_eks.worker_groups_core_additional_userdata
       asg_desired_capacity          = var.aws_baseline_eks.worker_groups_core_asg_desired_capacity
@@ -141,7 +152,8 @@ module "eks" {
       tags                          = local.worker_groups_core_tags
     },
     {
-      name                          = var.aws_baseline_eks.worker_groups_core_scaling_name
+      name                          = "${var.aws_baseline_eks.worker_groups_core_scaling_name}-${local.private_subnet_az1_name}"
+      subnets                       = local.private_subnet_az1_id
       instance_type                 = var.aws_baseline_eks.worker_groups_core_scaling_instance_type
       additional_userdata           = var.aws_baseline_eks.worker_groups_core_scaling_additional_userdata
       asg_desired_capacity          = var.aws_baseline_eks.worker_groups_core_scaling_asg_desired_capacity
@@ -153,7 +165,8 @@ module "eks" {
       tags                          = local.worker_groups_core_scaling_tags
     },
     {
-      name                          = var.aws_baseline_eks.worker_groups_spark_driver_low_cpu_name
+      name                          = "${var.aws_baseline_eks.worker_groups_spark_driver_low_cpu_name}-${local.private_subnet_az1_name}"
+      subnets                       = local.private_subnet_az1_id
       override_instance_types       = var.aws_baseline_eks.worker_groups_spark_driver_low_cpu_instance_type
       additional_userdata           = var.aws_baseline_eks.worker_groups_spark_driver_low_cpu_additional_userdata
       asg_desired_capacity          = var.aws_baseline_eks.worker_groups_spark_driver_low_cpu_asg_desired_capacity
@@ -165,7 +178,8 @@ module "eks" {
       tags                          = local.worker_groups_spark_driver_tags
     },
     {
-      name                          = var.aws_baseline_eks.worker_groups_spark_executor_low_cpu_name
+      name                          = "${var.aws_baseline_eks.worker_groups_spark_executor_low_cpu_name}-${local.private_subnet_az1_name}"
+      subnets                       = local.private_subnet_az1_id
       override_instance_types       = var.aws_baseline_eks.worker_groups_spark_executor_low_cpu_instance_type
       additional_userdata           = var.aws_baseline_eks.worker_groups_spark_executor_low_cpu_additional_userdata
       asg_desired_capacity          = var.aws_baseline_eks.worker_groups_spark_executor_low_cpu_asg_desired_capacity
@@ -177,7 +191,8 @@ module "eks" {
       tags                          = local.worker_groups_spark_executor_tags
     },
     {
-      name                          = var.aws_baseline_eks.worker_groups_jupyterhub_name
+      name                          = "${var.aws_baseline_eks.worker_groups_jupyterhub_name}-${local.private_subnet_az1_name}"
+      subnets                       = local.private_subnet_az1_id
       override_instance_types       = var.aws_baseline_eks.worker_groups_jupyterhub_instance_type
       additional_userdata           = var.aws_baseline_eks.worker_groups_jupyterhub_additional_userdata
       asg_desired_capacity          = var.aws_baseline_eks.worker_groups_jupyterhub_asg_desired_capacity

@@ -16,9 +16,6 @@ EKS_CLUSTER="cluster-spark-on-aws-eks-dev"
 aws eks update-kubeconfig --name ${EKS_CLUSTER} --region ${AWS_REGION}
 aws eks get-token --cluster-name ${EKS_CLUSTER}
 
-# Apply Karpenter configuration
-kubectl apply -f terraform/templates/karpenter_provisioners_jupyterhub.yaml
-
 # Port forwarding
 kubectl port-forward service/grafana 3000:80 -n monitoring &
 kubectl port-forward service/kubernetes-dashboard 3001:443 -n monitoring &

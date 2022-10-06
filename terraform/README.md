@@ -13,6 +13,7 @@
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
 | <a name="provider_helm"></a> [helm](#provider\_helm) | 2.4.1 |
+| <a name="provider_kubectl"></a> [kubectl](#provider\_kubectl) | >= 1.13.1 |
 | <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | ~> 2.6.1 |
 | <a name="provider_local"></a> [local](#provider\_local) | n/a |
 | <a name="provider_null"></a> [null](#provider\_null) | n/a |
@@ -61,6 +62,7 @@
 | [helm_release.prometheus](https://registry.terraform.io/providers/hashicorp/helm/2.4.1/docs/resources/release) | resource |
 | [helm_release.spark-operator](https://registry.terraform.io/providers/hashicorp/helm/2.4.1/docs/resources/release) | resource |
 | [helm_release.yunikorn](https://registry.terraform.io/providers/hashicorp/helm/2.4.1/docs/resources/release) | resource |
+| [kubectl_manifest.karpenter_provisioner_jupyterhub_user](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest) | resource |
 | [kubernetes_cluster_role_binding.spark-cluster-role-binding](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/cluster_role_binding) | resource |
 | [kubernetes_cluster_role_binding.spark-cluster-role-binding-jupyter](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/cluster_role_binding) | resource |
 | [kubernetes_namespace.jupyterhub](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
@@ -73,7 +75,6 @@
 | [kubernetes_service_account.spark-service-account](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/service_account) | resource |
 | [kubernetes_service_account.spark-service-account-jupyter](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/service_account) | resource |
 | [null_resource.build-and-push-ecr](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
-| [random_password.grafana_password](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
 | [random_string.suffix](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) | resource |
 | [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/availability_zones) | data source |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |

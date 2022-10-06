@@ -28,7 +28,7 @@ serviceMonitor:
   # -- Endpoint configuration for the ServiceMonitor.
   endpointConfig: {}
 # -- Number of replicas.
-replicas: 2
+replicas: 1
 # -- The number of old ReplicaSets to retain to allow rollback.
 revisionHistoryLimit: 10
 # -- Strategy for updating the pod.
@@ -147,7 +147,7 @@ webhook:
       cpu: 200m
       memory: 100Mi
     limits:
-      cpu: 200m
+      cpu: 300m
       memory: 100Mi
   # -- Webhook log level, defaults to the global log level
   logLevel: ""

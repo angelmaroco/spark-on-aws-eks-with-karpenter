@@ -1,6 +1,6 @@
 locals {
   name            = "cluster-${var.tags.project}-${var.tags.environment}"
-  cluster_version = "1.22"
+  cluster_version = "1.23"
   region          = data.aws_region.current.name
 }
 

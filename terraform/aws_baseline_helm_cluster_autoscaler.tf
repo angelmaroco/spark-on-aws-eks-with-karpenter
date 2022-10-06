@@ -8,7 +8,7 @@ resource "helm_release" "autoscaler" {
   name             = "cluster-autoscaler"
   repository       = "https://kubernetes.github.io/autoscaler"
   chart            = "cluster-autoscaler"
-  version          = "9.16.1"
+  version          = "9.21.0"
   timeout          = 600
 
   values = [data.local_file.helm_chart_autoscaler.content]

@@ -340,9 +340,9 @@ adminUser: admin
 
 # Use an existing secret for the admin user.
 admin:
-  existingSecret: ""
-  userKey: admin-user
-  passwordKey: admin-password
+  existingSecret: grafana-credentials
+  userKey: adminUser
+  passwordKey: adminPassword
 
 ## Define command to be executed at startup by grafana container
 ## Needed if using `vault-env` to manage secrets (ref: https://banzaicloud.com/blog/inject-secrets-into-pods-vault/)
@@ -475,23 +475,22 @@ plugins: []
 ## Configure grafana datasources
 ## ref: http://docs.grafana.org/administration/provisioning/#datasources
 ##
-datasources: {}
-#  datasources.yaml:
-#    apiVersion: 1
-#    datasources:
-#    - name: Prometheus
-#      type: prometheus
-#      url: http://prometheus-prometheus-server
-#      access: proxy
-#      isDefault: true
-#    - name: CloudWatch
-#      type: cloudwatch
-#      access: proxy
-#      uid: cloudwatch
-#      editable: false
-#      jsonData:
-#        authType: default
-#        defaultRegion: us-east-1
+datasources:
+ datasources.yaml:
+   apiVersion: 1
+   datasources:
+   - name: Prometheus
+     type: prometheus
+     url: http://prometheus-server.monitoring.svc.cluster.local
+     isDefault: true
+   - name: CloudWatch
+     type: cloudwatch
+     access: proxy
+     uid: cloudwatch
+     editable: false
+     jsonData:
+       authType: default
+       defaultRegion: eu-west-1
 
 ## Configure notifiers
 ## ref: http://docs.grafana.org/administration/provisioning/#alert-notification-channels

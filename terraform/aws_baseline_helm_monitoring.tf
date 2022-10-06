@@ -27,7 +27,7 @@ resource "helm_release" "prometheus" {
   namespace  = kubernetes_namespace.monitoring.metadata.0.name
   repository = "https://prometheus-community.github.io/helm-charts"
   version    = "15.8.1"
-  timeout    = 600
+  timeout    = 150
 
   values = [data.template_file.file.rendered]
 }
@@ -38,14 +38,19 @@ resource "helm_release" "grafana" {
   namespace  = kubernetes_namespace.monitoring.metadata.0.name
   repository = "https://grafana.github.io/helm-charts"
   version    = "6.26.2"
-  timeout    = 600
+  timeout    = 300
 
   values = [data.local_file.helm_chart_grafana.content]
-}
 
-resource "random_password" "grafana_password" {
-  length  = 16
-  special = false
+  set {
+    name  = "adminUser"
+    value = var.aws_baseline_monitoring.grafana_admin_user
+  }
+
+  set {
+    name  = "adminPassword"
+    value = var.aws_baseline_monitoring.grafana_admin_pass
+  }
 }
 
 resource "kubernetes_secret" "grafana-secrets" {
@@ -55,7 +60,7 @@ resource "kubernetes_secret" "grafana-secrets" {
   }
   data = {
     adminUser     = var.aws_baseline_monitoring.grafana_admin_user
-    adminPassword = random_password.grafana_password.result
+    adminPassword = var.aws_baseline_monitoring.grafana_admin_pass
   }
 }
 

@@ -104,3 +104,38 @@ resource "aws_iam_role_policy" "karpenter_contoller" {
     ]
   })
 }
+
+resource "kubectl_manifest" "karpenter_provisioner_jupyterhub_user" {
+  yaml_body = <<-YAML
+  apiVersion: karpenter.sh/v1alpha5
+  kind: Provisioner
+  metadata:
+    name: "karpenter-provisioner-jupyterhub-user"
+  spec:
+    labels:
+      workload: "workload-jupyterhub-user"
+    requirements:
+      - key: "node.kubernetes.io/instance-type"
+        operator: In
+        values: ["m5a.large", "m5a.xlarge"]
+      - key: "kubernetes.io/arch"
+        operator: In
+        values: ["amd64"]
+      - key: "karpenter.sh/capacity-type"
+        operator: In
+        values: ["spot", "on-demand"]
+    provider:
+      tags:
+        Name: "karpenter-provisioner-jupyterhub-user"
+      instanceProfile: "KarpenterNodeInstanceProfile-cluster-spark-on-aws-eks-dev"
+      subnetSelector:
+          Name: "*spark-on-aws-eks-dev-private*"
+      securityGroupSelector:
+          Name: "cluster-spark-on-aws-eks-dev-eks_worker_sg"
+    ttlSecondsAfterEmpty: 60
+  YAML
+
+  depends_on = [
+    helm_release.karpenter
+  ]
+}

@@ -24,16 +24,14 @@ operatorPlugins: "general,spark-k8s-operator"
 serviceAccount: yunikorn-admin
 hostNetwork: false
 
-placeHolderImage: k8s.gcr.io/pause
-
 image:
   repository: apache/yunikorn
-  tag: scheduler-1.1.0
+  tag: scheduler-0.12.2
   pullPolicy: Always
 
 pluginImage:
   repository: apache/yunikorn
-  tag: scheduler-plugin-1.1.0
+  tag: scheduler-plugin-0.12.2
   pullPolicy: Always
 
 nodeSelector: {}
@@ -51,7 +49,7 @@ affinity:
 admissionController:
   image:
     repository: apache/yunikorn
-    tag: admission-1.1.0
+    tag: admission-0.12.2
     pullPolicy: Always
   replicaCount: 1
   serviceAccount: yunikorn-admission-controller
@@ -66,25 +64,28 @@ admissionController:
       memory: 500Mi
     limits:
       cpu: 500m
-      memory: 500Mi
+      memory: 1000Mi
   nodeSelector: {}
   tolerations: []
   affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-          - matchExpressions:
-              - key: node-type
-                operator: In
-                values:
-                  - core-scaling
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - podAffinityTerm:
+            labelSelector:
+              matchExpressions:
+                - key: node-type
+                  operator: In
+                  values:
+                    - core-scaling
+            topologyKey: failure-domain.beta.kubernetes.io/zone
+          weight: 100
   service:
     type: ClusterIP
 
 web:
   image:
     repository: apache/yunikorn
-    tag: web-1.1.0
+    tag: web-0.12.2
     pullPolicy: Always
   resources:
     requests:
@@ -105,7 +106,7 @@ resources:
     memory: 1Gi
   limits:
     cpu: 4
-    memory: 2Gi
+    memory: 6Gi
 
 
 # When this flag is true, the admission controller will be installed along with the scheduler.
@@ -138,57 +139,11 @@ configuration: |
           properties:
             application.sort.policy: fifo
           queues:
-            - name: default
-              resources:
-                guaranteed:
-                  memory: 5000000
-                  vcore: 500000
-                max:
-                  memory: 8000000
-                  vcore: 800000
             - name: spark-apps
               resources:
                 guaranteed:
-                  memory: 1000000
-                  vcore: 100000
+                  memory: 10000000
+                  vcore: 1000000
                 max:
-                  memory: 1000000
-                  vcore: 100000
-
-# Use this configuration to configure absolute capacities for yunikorn queues
-#configuration: |
-#  partitions:
-#    -
-#      name: default
-#      queues:
-#        -
-#          name: root
-#          submitacl: '*'
-#          queues:
-#            -
-#              name: advertisement
-#              resources:
-#                guaranteed:
-#                  memory: 500G
-#                  vcore: 50
-#                max:
-#                  memory: 800G
-#                  vcore: 80
-#            -
-#              name: search
-#              resources:
-#                guaranteed:
-#                  memory: 400G
-#                  vcore: 40
-#                max:
-#                  memory: 600G
-#                  vcore: 60
-#            -
-#              name: sandbox
-#              resources:
-#                guaranteed:
-#                  memory: 100G
-#                  vcore: 10
-#                max:
-#                  memory: 100G
-#                  vcore: 10
+                  memory: 100000000
+                  vcore: 10000000

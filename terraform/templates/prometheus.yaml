@@ -30,7 +30,7 @@ serviceAccounts:
 alertmanager:
   ## If false, alertmanager will not be installed
   ##
-  enabled: true
+  enabled: false
 
   ## Use a ClusterRole (and ClusterRoleBinding)
   ## - If set to false - we define a Role and RoleBinding in the defined namespaces ONLY
@@ -909,7 +909,7 @@ server:
     ## If true, Prometheus server will create/use a Persistent Volume Claim
     ## If false, use emptyDir
     ##
-    enabled: true
+    enabled: false
 
     ## Prometheus server data Persistent Volume access modes
     ## Must match those of existing PV or dynamic provisioner
@@ -1437,6 +1437,12 @@ serverFiles:
         static_configs:
           - targets:
             - localhost:9090
+      - job_name: 'yunikorn'
+        scrape_interval: 1s
+        metrics_path: '/ws/v1/metrics'
+        static_configs:
+          - targets:
+            - yunikorn-service.yunikorn.svc.cluster.local:9080
 
       # A scrape configuration for running Prometheus on a Kubernetes cluster.
       # This uses separate scrape configs for cluster components (i.e. API server, node)
