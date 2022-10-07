@@ -23,7 +23,6 @@ spec:
     "spark.dynamicAllocation.executorAllocationRatio": "1"
     "spark.dynamicAllocation.schedulerBacklogTimeout": "1"
     "spark.kubernetes.allocation.batch.size": "15"
-    "spark.kubernetes.driver.label.spark/app": "spark-job-${UUID}"
   type: Python
   pythonVersion: "3"
   mode: cluster
@@ -53,6 +52,7 @@ spec:
     cores: 1
     coreRequest: "850m"
     memory: "2400m"
+    memoryOverhead: "500m"
     labels:
       version: 3.2.0
     serviceAccount: spark
@@ -68,7 +68,7 @@ spec:
           "minMember": 1,
           "minResource": {
             "cpu": "850m",
-            "memory": "2400"
+            "memory": "3100M"
           },
           "affinity": {
               "nodeAffinity": {
@@ -96,7 +96,7 @@ spec:
           "minMember": 2,
           "minResource": {
             "cpu": "850m",
-            "memory": "2400"
+            "memory": "3100M"
           },
           "affinity": {
               "nodeAffinity": {
@@ -124,6 +124,7 @@ spec:
     instances: 2
     coreRequest: "850m"
     memory: "2400m"
+    memoryOverhead: "500m"
     labels:
       version: 3.2.0
     volumeMounts:
