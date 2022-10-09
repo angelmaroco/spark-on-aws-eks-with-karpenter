@@ -135,12 +135,14 @@ module "eks" {
   enable_irsa                          = var.aws_baseline_eks.enable_irsa
   attach_worker_cni_policy             = var.aws_baseline_eks.attach_worker_cni_policy
   worker_additional_security_group_ids = [module.sg_eks_worker_group_all.this_security_group_id]
-  workers_additional_policies          = ["arn:aws:iam::aws:policy/AmazonS3FullAccess"]
+  workers_additional_policies = [
+    "arn:aws:iam::aws:policy/AmazonS3FullAccess",
+    "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy",
+  ]
 
   worker_groups_launch_template = [
     {
-      name                          = "${var.aws_baseline_eks.worker_groups_core_name}-${local.private_subnet_az1_name}"
-      subnets                       = local.private_subnet_az1_id
+      name                          = var.aws_baseline_eks.worker_groups_core_name
       instance_type                 = var.aws_baseline_eks.worker_groups_core_instance_type
       additional_userdata           = var.aws_baseline_eks.worker_groups_core_additional_userdata
       asg_desired_capacity          = var.aws_baseline_eks.worker_groups_core_asg_desired_capacity
@@ -152,8 +154,7 @@ module "eks" {
       tags                          = local.worker_groups_core_tags
     },
     {
-      name                          = "${var.aws_baseline_eks.worker_groups_core_scaling_name}-${local.private_subnet_az1_name}"
-      subnets                       = local.private_subnet_az1_id
+      name                          = var.aws_baseline_eks.worker_groups_core_scaling_name
       instance_type                 = var.aws_baseline_eks.worker_groups_core_scaling_instance_type
       additional_userdata           = var.aws_baseline_eks.worker_groups_core_scaling_additional_userdata
       asg_desired_capacity          = var.aws_baseline_eks.worker_groups_core_scaling_asg_desired_capacity
@@ -191,8 +192,7 @@ module "eks" {
       tags                          = local.worker_groups_spark_executor_tags
     },
     {
-      name                          = "${var.aws_baseline_eks.worker_groups_jupyterhub_name}-${local.private_subnet_az1_name}"
-      subnets                       = local.private_subnet_az1_id
+      name                          = var.aws_baseline_eks.worker_groups_jupyterhub_name
       override_instance_types       = var.aws_baseline_eks.worker_groups_jupyterhub_instance_type
       additional_userdata           = var.aws_baseline_eks.worker_groups_jupyterhub_additional_userdata
       asg_desired_capacity          = var.aws_baseline_eks.worker_groups_jupyterhub_asg_desired_capacity
