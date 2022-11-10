@@ -215,6 +215,27 @@ module "eks" {
   ]
 }
 
+resource "aws_eks_addon" "aws_eks_addon_csi" {
+  cluster_name      = module.eks.cluster_id
+  addon_name        = "aws-ebs-csi-driver"
+  addon_version     = "v1.11.4-eksbuild.1"
+  resolve_conflicts = "OVERWRITE"
+
+  depends_on = [
+    module.eks
+  ]
+}
+resource "aws_eks_addon" "aws_eks_addon_cni" {
+  cluster_name      = module.eks.cluster_id
+  addon_name        = "vpc-cni"
+  addon_version     = "v1.11.4-eksbuild.1"
+  resolve_conflicts = "OVERWRITE"
+
+  depends_on = [
+    module.eks
+  ]
+}
+
 module "sg_eks_worker_group_on_demand" {
   source              = "terraform-aws-modules/security-group/aws"
   version             = "3.2.0"

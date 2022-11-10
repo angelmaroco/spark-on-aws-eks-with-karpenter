@@ -51,7 +51,7 @@ spec:
   driver:
     cores: 1
     coreRequest: "850m"
-    memory: "2400m"
+    memory: "2300m"
     memoryOverhead: "500m"
     labels:
       version: 3.2.0
@@ -68,7 +68,7 @@ spec:
           "minMember": 1,
           "minResource": {
             "cpu": "850m",
-            "memory": "3100M"
+            "memory": "3000M"
           },
           "affinity": {
               "nodeAffinity": {

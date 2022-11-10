@@ -55,7 +55,7 @@ admissionController:
     pullPolicy: Always
   replicaCount: 1
   serviceAccount: yunikorn-admission-controller
-  processNamespaces: ""
+  processNamespaces: "spark-apps"
   bypassNamespaces: "^kube-system$"
   labelNamespaces: ""
   noLabelNamespaces: ""
@@ -111,7 +111,7 @@ resources:
 # When this flag is true, the admission controller will be installed along with the scheduler.
 # When this flag is false, the admission controller will not be installed.
 # Once the admission controller is installed, all traffic will be routing to yunikorn.
-embedAdmissionController: false
+embedAdmissionController: true
 
 # When this flag is true, the scheduler will be deployed as Kubernetes scheduler plugin.
 # When this flag is false, the scheduler will be deployed as a standalone scheduler.
@@ -127,8 +127,7 @@ enableSchedulerPlugin: true
 # Use this configuration to automatically map K8s namespaces to yunikorn queues
 configuration: |
   partitions:
-    -
-      name: default
+    - name: default
       placementrules:
         - name: tag
           value: namespace
@@ -136,6 +135,17 @@ configuration: |
       queues:
         - name: root
           submitacl: '*'
+          properties:
+            application.sort.policy: fifo
+          queues:
+            - name: spark-apps
+              resources:
+                guaranteed:
+                  memory: 300G
+                  vcore: 100
+                max:
+                  memory: 3000G
+                  vcore: 1000
 
 # Use this configuration to configure absolute capacities for yunikorn queues
 #configuration: |

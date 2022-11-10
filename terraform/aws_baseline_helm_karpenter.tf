@@ -96,7 +96,9 @@ resource "aws_iam_role_policy" "karpenter_contoller" {
           "ec2:DescribeInstanceTypes",
           "ec2:DescribeInstanceTypeOfferings",
           "ec2:DescribeAvailabilityZones",
-          "ssm:GetParameter"
+          "ssm:GetParameter",
+          "pricing:GetProducts",
+          "ec2:DescribeSpotPriceHistory"
         ]
         Effect   = "Allow"
         Resource = "*"
@@ -112,12 +114,19 @@ resource "kubectl_manifest" "karpenter_provisioner_jupyterhub_user" {
   metadata:
     name: "karpenter-provisioner-jupyterhub-user"
   spec:
+    taints:
+      - key: node-type
+        value: workload-jupyterhub-user
+        effect: NoSchedule
     labels:
-      workload: "workload-jupyterhub-user"
+      node-type: "workload-jupyterhub-user"
     requirements:
-      - key: "node.kubernetes.io/instance-type"
+      - key: "karpenter.k8s.aws/instance-family"
         operator: In
-        values: ["m5a.large", "m5a.xlarge"]
+        values: ["m6a", "m5a", "m5"]
+      - key: "karpenter.k8s.aws/instance-size"
+        operator: In
+        values: ["xlarge", "2xlarge"]
       - key: "kubernetes.io/arch"
         operator: In
         values: ["amd64"]
@@ -132,7 +141,46 @@ resource "kubectl_manifest" "karpenter_provisioner_jupyterhub_user" {
           Name: "*spark-on-aws-eks-dev-private*"
       securityGroupSelector:
           Name: "cluster-spark-on-aws-eks-dev-eks_worker_sg"
-    ttlSecondsAfterEmpty: 60
+    ttlSecondsAfterEmpty: 30
+  YAML
+
+  depends_on = [
+    helm_release.karpenter
+  ]
+}
+
+resource "kubectl_manifest" "karpenter_provisioner_jupyterhub_user_spark" {
+  yaml_body = <<-YAML
+  apiVersion: karpenter.sh/v1alpha5
+  kind: Provisioner
+  metadata:
+    name: "karpenter-provisioner-jupyterhub-user-spark"
+  spec:
+    taints:
+      - key: node-type
+        value: workload-jupyterhub-user-spark
+        effect: NoSchedule
+    labels:
+      node-type: "workload-jupyterhub-user-spark"
+    requirements:
+      - key: "karpenter.k8s.aws/instance-family"
+        operator: In
+        values: ["m5","m5a","m6a"]
+      - key: "kubernetes.io/arch"
+        operator: In
+        values: ["amd64"]
+      - key: "karpenter.sh/capacity-type"
+        operator: In
+        values: ["spot", "on-demand"]
+    provider:
+      tags:
+        Name: "karpenter-provisioner-jupyterhub-user-spark"
+      instanceProfile: "KarpenterNodeInstanceProfile-cluster-spark-on-aws-eks-dev"
+      subnetSelector:
+          Name: "*spark-on-aws-eks-dev-private*"
+      securityGroupSelector:
+          Name: "cluster-spark-on-aws-eks-dev-eks_worker_sg"
+    ttlSecondsAfterEmpty: 30
   YAML
 
   depends_on = [

@@ -8,6 +8,13 @@ resource "kubernetes_namespace" "jupyterhub" {
   }
 }
 
+resource "kubernetes_namespace" "spark_users" {
+  metadata {
+    name = "spark-users"
+  }
+}
+
+
 resource "kubernetes_service_account" "spark-service-account-jupyter" {
   metadata {
     name      = "spark-jupyter"
@@ -42,4 +49,14 @@ resource "helm_release" "jupyterhub" {
   timeout          = 300
 
   values = [data.local_file.helm_chart_jupyterhub.content]
+
+  set {
+    name  = "singleuser.image.name"
+    value = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${data.aws_region.current.name}.amazonaws.com/jupyter-custom"
+  }
+
+  set {
+    name  = "singleuser.image.tag"
+    value = "3.2.0"
+  }
 }

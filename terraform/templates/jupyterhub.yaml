@@ -133,8 +133,8 @@ hub:
     # restarts it if needed. To become unready following startup serves no
     # purpose as there are no other pod to fallback to in our non-HA deployment.
     enabled: true
-    initialDelaySeconds: 0
-    periodSeconds: 2
+    initialDelaySeconds: 10
+    periodSeconds: 5
     failureThreshold: 1000
     timeoutSeconds: 1
   existingSecret:
@@ -327,9 +327,13 @@ proxy:
 # pod, and its spawning of user pods such as jupyter-myusername.
 singleuser:
   podNameTemplate:
-  extraTolerations: []
+  extraTolerations:
+  - key: "node-type"
+    operator: "Equal"
+    value: "workload-jupyterhub-user"
+    effect: "NoSchedule"
   nodeSelector:
-    workload: "workload-jupyterhub-user"
+    node-type: "workload-jupyterhub-user"
   extraNodeAffinity:
     required: []
     preferred: []
@@ -415,7 +419,7 @@ scheduling:
   userScheduler:
     enabled: true
     revisionHistoryLimit:
-    replicas: 2
+    replicas: 1
     logLevel: 4
     # plugins are configured on the user-scheduler to make us score how we
     # schedule user pods in a way to help us schedule on the most busy node. By
@@ -596,7 +600,7 @@ prePuller:
   extraTolerations: []
   # hook relates to the hook-image-awaiter Job and hook-image-puller DaemonSet
   hook:
-    enabled: true
+    enabled: false
     pullOnlyOnChanges: true
     # image and the configuration below relates to the hook-image-awaiter Job
     image:
@@ -618,7 +622,7 @@ prePuller:
       name:
       annotations: {}
   continuous:
-    enabled: true
+    enabled: false
   pullProfileListImages: true
   extraImages: {}
   pause:
