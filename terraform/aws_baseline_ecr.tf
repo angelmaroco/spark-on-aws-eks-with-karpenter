@@ -16,11 +16,32 @@ resource "aws_ecr_repository" "spark-custom" {
 
 resource "aws_ecr_repository_policy" "spark-custom-policy" {
   repository = aws_ecr_repository.spark-custom.name
-  policy     = data.aws_iam_policy_document.spark-custom-policy-document.json
+  policy     = data.aws_iam_policy_document.custom-policy-document.json
+}
+
+resource "aws_ecr_repository" "jupyter-custom" {
+  name                 = var.aws_baseline_ecr_jupyter.name
+  image_tag_mutability = var.aws_baseline_ecr_jupyter.image_tag_mutability
+
+  image_scanning_configuration {
+    scan_on_push = var.aws_baseline_ecr_jupyter.image_scanning_configuration
+  }
+
+  encryption_configuration {
+    encryption_type = var.aws_baseline_ecr_jupyter.encryption_type
+    kms_key         = module.aws_baseline_kms.key_arn
+  }
+
+  tags = var.tags
+}
+
+resource "aws_ecr_repository_policy" "jupyter-custom-policy" {
+  repository = aws_ecr_repository.jupyter-custom.name
+  policy     = data.aws_iam_policy_document.custom-policy-document.json
 }
 
 
-data "aws_iam_policy_document" "spark-custom-policy-document" {
+data "aws_iam_policy_document" "custom-policy-document" {
   statement {
     sid = "AllowPull"
     actions = [
@@ -48,12 +69,22 @@ data "aws_iam_policy_document" "spark-custom-policy-document" {
 }
 
 
-resource "null_resource" "build-and-push-ecr" {
+resource "null_resource" "build-and-push-ecr-spark" {
   provisioner "local-exec" {
     command = "../build/ecr/build-spark-image.sh -a ${data.aws_caller_identity.current.account_id} -r ${data.aws_region.current.name}"
   }
 
   depends_on = [
     aws_ecr_repository.spark-custom
+  ]
+}
+
+resource "null_resource" "build-and-push-ecr-jupyter" {
+  provisioner "local-exec" {
+    command = "../build/ecr/build-jupyter-image.sh -a ${data.aws_caller_identity.current.account_id} -r ${data.aws_region.current.name}"
+  }
+
+  depends_on = [
+    aws_ecr_repository.jupyter-custom
   ]
 }

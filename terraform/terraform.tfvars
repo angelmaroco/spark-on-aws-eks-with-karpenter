@@ -51,7 +51,7 @@ aws_baseline_eks = {
   worker_groups_core_suspended_processes  = ["AZRebalance"]
 
   worker_groups_core_scaling_name                 = "core-scaling-group-on-demand"
-  worker_groups_core_scaling_instance_type        = "m5.2xlarge"
+  worker_groups_core_scaling_instance_type        = "m6a.2xlarge"
   worker_groups_core_scaling_additional_userdata  = ""
   worker_groups_core_scaling_asg_desired_capacity = 1
   worker_groups_core_scaling_asg_max_size         = 2
@@ -60,7 +60,7 @@ aws_baseline_eks = {
   worker_groups_core_scaling_suspended_processes  = ["AZRebalance"]
 
   worker_groups_spark_driver_low_cpu_name                 = "spark-group-driver-workload-low-cpu-on-demand"
-  worker_groups_spark_driver_low_cpu_instance_type        = ["m5.large", "m5a.large"]
+  worker_groups_spark_driver_low_cpu_instance_type        = ["m6a.large", "m5.large"]
   worker_groups_spark_driver_low_cpu_additional_userdata  = ""
   worker_groups_spark_driver_low_cpu_asg_desired_capacity = 0
   worker_groups_spark_driver_low_cpu_asg_max_size         = 10
@@ -69,7 +69,7 @@ aws_baseline_eks = {
   worker_groups_spark_driver_low_cpu_suspended_processes  = ["AZRebalance"]
 
   worker_groups_spark_executor_low_cpu_name                 = "spark-group-executor-workload-low-cpu-on-spot"
-  worker_groups_spark_executor_low_cpu_instance_type        = ["m5.xlarge", "m5a.xlarge"]
+  worker_groups_spark_executor_low_cpu_instance_type        = ["m6a.xlarge", "m5a.xlarge", "m5.xlarge"]
   worker_groups_spark_executor_low_cpu_additional_userdata  = ""
   worker_groups_spark_executor_low_cpu_asg_desired_capacity = 0
   worker_groups_spark_executor_low_cpu_asg_max_size         = 10
@@ -108,6 +108,13 @@ aws_baseline_monitoring = {
 }
 aws_baseline_ecr = {
   name                         = "spark-custom"
+  image_tag_mutability         = "IMMUTABLE"
+  image_scanning_configuration = "true"
+  encryption_type              = "KMS"
+}
+
+aws_baseline_ecr_jupyter = {
+  name                         = "jupyter-custom"
   image_tag_mutability         = "IMMUTABLE"
   image_scanning_configuration = "true"
   encryption_type              = "KMS"

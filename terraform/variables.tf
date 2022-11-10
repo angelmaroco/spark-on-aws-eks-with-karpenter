@@ -23,3 +23,7 @@ variable "aws_baseline_monitoring" {
 variable "aws_baseline_ecr" {
   type = map(string)
 }
+
+variable "aws_baseline_ecr_jupyter" {
+  type = map(string)
+}
