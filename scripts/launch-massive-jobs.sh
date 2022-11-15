@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ############################################################
-# Build spark image and push to ECR                        #
+# Launch spark job                                         #
 ############################################################
 
 usage() { echo "Usage: $0 -a <AWS_ACCOUNT (123456789012)> -r <AWS_REGION (eu-west-1)> -n <NUM_SPARK_JOBS (10)> -t <TYPE_WORKLOAD (workload-intensive-cpu|workload-moderate-cpu|workload-low-cpu|workload-intensive-memory)" 1>&2; exit 1; }

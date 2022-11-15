@@ -68,7 +68,7 @@ spec:
           "minMember": 1,
           "minResource": {
             "cpu": "850m",
-            "memory": "3000M"
+            "memory": "3100M"
           },
           "affinity": {
               "nodeAffinity": {
