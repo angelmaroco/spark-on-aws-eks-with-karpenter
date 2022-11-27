@@ -1,18 +1,22 @@
-# **Spark on Kubernetes: Advanced Scheduling and Scaling**
+# **Spark on Kubernetes: A deep dive into scheduling, scaling and costs**
 
-- [**Spark on Kubernetes: Advanced Scheduling and Scaling**](#spark-on-kubernetes-advanced-scheduling-and-scaling)
+- [**Spark on Kubernetes: A deep dive into scheduling, scaling and costs**](#spark-on-kubernetes-a-deep-dive-into-scheduling-scaling-and-costs)
   - [**Overview**](#overview)
   - [**Resources**](#resources)
   - [**Architecture - High Level**](#architecture---high-level)
   - [**Details of components**](#details-of-components)
   - [**Advanced Scheduling with Yunikorn**](#advanced-scheduling-with-yunikorn)
-    - [**Challenges**:](#challenges)
+    - [**Challenges**](#challenges)
     - [**Gang scheduling**](#gang-scheduling)
     - [**How to work Spark-operator with Yunikorn and Cluster autoscaler**](#how-to-work-spark-operator-with-yunikorn-and-cluster-autoscaler)
     - [**Configurating Spark-Operator wth Yunikorn**](#configurating-spark-operator-wth-yunikorn)
     - [**Configurating spark workloads**](#configurating-spark-workloads)
-    - [**Configurating quotes**](#configurating-quotes)
-  - [**Scaling pods: cluster autoscaler vs Karpenter**](#scaling-pods-cluster-autoscaler-vs-karpenter)
+    - [**Configurating Yunikorn queues**](#configurating-yunikorn-queues)
+  - [**Scaling strategy**](#scaling-strategy)
+    - [**Core components**](#core-components)
+    - [**Spark drivers and executors**](#spark-drivers-and-executors)
+    - [](#)
+  - [**Cost-effective strategy: On-demand and Spot**](#cost-effective-strategy-on-demand-and-spot)
   - [**How to work JupyterHub with Karpenter**](#how-to-work-jupyterhub-with-karpenter)
   - [**Deploying the solution**](#deploying-the-solution)
   - [**Testing the solution**](#testing-the-solution)
@@ -65,7 +69,7 @@ The following image shows the high-level architecture on AWS with High Availabil
 
 ## **Advanced Scheduling with Yunikorn**
 
-### **Challenges**:
+### **Challenges**
 
 Distributed processing with Spark on Kubernetes presents two challenges to solve: **improve resource utilization and Autoscaling performance**.
 
@@ -155,12 +159,254 @@ spec:
 
 ### **Configurating Spark-Operator wth Yunikorn**
 
+
+The following code snippets can be seen [here](./scripts/templates/sparkapplication-testing-yunikorn.yaml)
+
+
+```yaml
+apiVersion: "sparkoperator.k8s.io/v1beta2"
+kind: SparkApplication
+metadata:
+  name: example-low-${UUID}
+  namespace: spark-apps                 # Namespace where you will run the job.
+  labels:
+    app: spark-job-${UUID}              # App name
+    applicationId: example-low-${UUID}  # App Id. This parameter should be unique, used to perform pod grouping
+    queue: "root.spark-apps"            # Yunikorn queue.
+```
+
+```yaml
+spec:
+  batchScheduler: "yunikorn"            # Specified batch scheduler (If we don't specify this parameter, it will use kube-scheduler.)
+```
+
+```yaml
+  driver:
+    cores: 1
+    coreRequest: "850m"
+    memory: "2300m"
+    memoryOverhead: "500m"
+    annotations:
+      yunikorn.apache.org/schedulingPolicyParameters: "placeholderTimeoutSeconds=30"
+      yunikorn.apache.org/task-group-name: "spark-driver-${UUID}"
+      yunikorn.apache.org/task-groups: |-
+        [
+          {
+            "name": "spark-driver-${UUID}",
+            "minMember": 1,
+            "minResource": {
+              "cpu": "850m",
+              "memory": "3000M"
+            },
+            "affinity": {
+              "nodeAffinity": {
+                "requiredDuringSchedulingIgnoredDuringExecution": {
+                  "nodeSelectorTerms": [
+                    {
+                      "matchExpressions": [
+                        {
+                          "key": "workload",
+                          "operator": "In",
+                          "values": [
+                            "${TYPE_WORKLOAD}-driver"
+                          ]
+                        }
+                      ],
+                      "topologyKey": "topology.kubernetes.io/zone"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "name": "spark-executor-${UUID}",
+            "minMember": 2,
+            "minResource": {
+              "cpu": "850m",
+              "memory": "3000M"
+            },
+            "affinity": {
+              "nodeAffinity": {
+                "requiredDuringSchedulingIgnoredDuringExecution": {
+                  "nodeSelectorTerms": [
+                    {
+                      "matchExpressions": [
+                        {
+                          "key": "workload",
+                          "operator": "In",
+                          "values": [
+                            "${TYPE_WORKLOAD}-executor"
+                          ]
+                        }
+                      ],
+                      "topologyKey": "topology.kubernetes.io/zone"
+                    }
+                  ]
+                }
+              },
+              "podAffinity": {
+                "requiredDuringSchedulingIgnoredDuringExecution": [
+                  {
+                    "labelSelector": {
+                      "matchExpressions": [
+                        {
+                          "key": "applicationId",
+                          "operator": "In",
+                          "values": [
+                            "example-low-${UUID}"
+                          ]
+                        }
+                      ]
+                    },
+                    "topologyKey": "topology.kubernetes.io/zone"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+  ```
+
+  ```yaml
+  executor:
+    cores: 1
+    instances: 2
+    coreRequest: "850m"
+    memory: "2400m"
+    memoryOverhead: "500m"
+    labels:
+      version: 3.2.0
+    volumeMounts:
+      - name: "spark-volume-testing-${UUID}"
+        mountPath: "/tmp"
+    annotations:
+      yunikorn.apache.org/task-group-name: "spark-executor-${UUID}"
+
+```
+
+[definition](./terraform/templates/yunikorn_scheduler.yaml)
+
+```yaml
+operatorPlugins: "general,spark-k8s-operator"
+```
+
 ### **Configurating spark workloads**
 
-### **Configurating quotes**
+### **Configurating Yunikorn queues**
+
+[definition](./terraform/templates/yunikorn_scheduler.yaml)
+
+![](/docs/images/yunikorn-front-queues.png)
+
+```yaml
+configuration: |
+  partitions:
+    - name: default
+      placementrules:
+        - name: tag
+          value: namespace
+          create: true
+      queues:
+        - name: root
+          submitacl: '*'
+          properties:
+            application.sort.policy: fifo
+          queues:
+            - name: spark-apps
+              resources:
+                guaranteed:
+                  memory: 300G
+                  vcore: 100
+                max:
+                  memory: 3000G
+                  vcore: 1000
+```
+
+[More info about queues config](https://yunikorn.apache.org/docs/user_guide/queue_config)
+
+## **Scaling strategy**
+
+### **Core components**
+
+### **Spark drivers and executors**
 
 
-## **Scaling pods: cluster autoscaler vs Karpenter**
+spark.kubernetes.node.selector.topology.kubernetes.io/zone='<availability zone>'
+
+```yaml
+  locals {
+
+    private_subnet_az1_id   = [module.aws_baseline_vpc.private_subnets[0]]
+    private_subnet_az1_name = "az1"
+
+    private_subnet_az2_id   = [module.aws_baseline_vpc.private_subnets[1]]
+    private_subnet_az2_name = "az2"
+
+    private_subnet_az3_id   = [module.aws_baseline_vpc.private_subnets[2]]
+    private_subnet_az3_name = "az3"
+  ...
+  }
+
+  worker_groups_launch_template = [
+    {
+      name                          = "${var.aws_baseline_eks.worker_groups_spark_driver_low_cpu_name}-${local.private_subnet_az1_name}"
+      subnets                       = local.private_subnet_az1_id
+      ...
+    },
+    {
+      name                          = "${var.aws_baseline_eks.worker_groups_spark_executor_low_cpu_name}-${local.private_subnet_az1_name}"
+      subnets                       = local.private_subnet_az1_id
+      ...
+    },
+
+    {
+      name                          = "${var.aws_baseline_eks.worker_groups_spark_driver_low_cpu_name}-${local.private_subnet_az2_name}"
+      subnets                       = local.private_subnet_az2_id
+      ...
+    },
+    {
+      name                          = "${var.aws_baseline_eks.worker_groups_spark_executor_low_cpu_name}-${local.private_subnet_az2_name}"
+      subnets                       = local.private_subnet_az2_id
+      ...
+    },
+
+    {
+      name                          = "${var.aws_baseline_eks.worker_groups_spark_driver_low_cpu_name}-${local.private_subnet_az3_name}"
+      subnets                       = local.private_subnet_az3_id
+      ...
+      ...
+    },
+    {
+      name                          = "${var.aws_baseline_eks.worker_groups_spark_executor_low_cpu_name}-${local.private_subnet_az3_name}"
+      subnets                       = local.private_subnet_az3_id
+      ...
+    }
+
+  ]
+```
+
+
+```yaml
+extraArgs:
+  expander: priority
+  balance-similar-node-groups: false
+
+expanderPriorities: |-
+  50:
+    - .*az3.*
+  60:
+    - .*az2.*
+  70:
+    - .*az1.*
+```
+
+###
+
+## **Cost-effective strategy: On-demand and Spot**
+
+
+
 
 
 
@@ -172,6 +418,8 @@ spec:
 
 ## **Deploying the solution**
 
+With the following command we will create all the infrastructure and push the images used by the spark processes over ECR (spark jobs and jupyterhub notebooks).
+
 ```bash
 cd terraform
 terraform apply
@@ -181,17 +429,25 @@ terraform apply
 
 ### **Requeriments**
 
-With the following command we will create all the infrastructure and push the images used by the spark processes over ECR (spark jobs and jupyterhub notebooks).
+Setup k8s context
 
 ```bash
 # Setup environment
-./scripts/setup-eks-client-environment.sh -r <aws-region>
+bash scripts/setup-eks-client-environment.sh -r <aws-region>
+
+# Example
+./scripts/setup-eks-client-environment.sh -r eu-west-1
 ```
 
 ### **Spark jobs**
 ```bash
 # Launch 2 spark job of type workload-low-cpu
-./scripts/launch-massive-jobs.sh  -a <aws-account> -r <aws-region> -n 2 -t workload-low-cpu
+bash scripts/launch-massive-jobs.sh  -a <aws-account> -r <aws-region> -n <num-jobs> -t workload-low-cpu
+bash scripts/launch-massive-jobs.sh  -a <aws-account> -r <aws-region> -n <num-jobs> -t workload-high-cpu
+
+# Examples
+bash scripts/launch-massive-jobs.sh  -a 123456789012 -r eu-west-1 -n 2 -t workload-low-cpu
+bash scripts/launch-massive-jobs.sh  -a 123456789012 -r eu-west-1 -n 2 -t workload-high-cpu
 ```
 
 

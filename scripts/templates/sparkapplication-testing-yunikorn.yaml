@@ -63,67 +63,87 @@ spec:
       yunikorn.apache.org/schedulingPolicyParameters: "placeholderTimeoutSeconds=30"
       yunikorn.apache.org/task-group-name: "spark-driver-${UUID}"
       yunikorn.apache.org/task-groups: |-
-        [{
-          "name": "spark-driver-${UUID}",
-          "minMember": 1,
-          "minResource": {
-            "cpu": "850m",
-            "memory": "3100M"
-          },
-          "affinity": {
+        [
+          {
+            "name": "spark-driver-${UUID}",
+            "minMember": 1,
+            "minResource": {
+              "cpu": "850m",
+              "memory": "3000M"
+            },
+            "affinity": {
               "nodeAffinity": {
                 "requiredDuringSchedulingIgnoredDuringExecution": {
-                    "nodeSelectorTerms": [
-                      {
-                          "matchExpressions": [
-                            {
-                                "key": "workload",
-                                "operator": "In",
-                                "values": [
-                                  "${TYPE_WORKLOAD}-driver"
-                                ]
-                            }
-                          ],
-                          "topologyKey": "topology.kubernetes.io/zone"
-                      }
-                    ]
+                  "nodeSelectorTerms": [
+                    {
+                      "matchExpressions": [
+                        {
+                          "key": "workload",
+                          "operator": "In",
+                          "values": [
+                            "${TYPE_WORKLOAD}-driver"
+                          ]
+                        }
+                      ],
+                      "topologyKey": "topology.kubernetes.io/zone"
+                    }
+                  ]
                 }
               }
-          }
-        },
-        {
-          "name": "spark-executor-${UUID}",
-          "minMember": 2,
-          "minResource": {
-            "cpu": "850m",
-            "memory": "3100M"
+            }
           },
-          "affinity": {
+          {
+            "name": "spark-executor-${UUID}",
+            "minMember": 2,
+            "minResource": {
+              "cpu": "850m",
+              "memory": "3000M"
+            },
+            "affinity": {
               "nodeAffinity": {
                 "requiredDuringSchedulingIgnoredDuringExecution": {
-                    "nodeSelectorTerms": [
-                      {
-                          "matchExpressions": [
-                            {
-                                "key": "workload",
-                                "operator": "In",
-                                "values": [
-                                  "${TYPE_WORKLOAD}-executor"
-                                ]
-                            }
-                          ],
-                          "topologyKey": "topology.kubernetes.io/zone"
-                      }
-                    ]
+                  "nodeSelectorTerms": [
+                    {
+                      "matchExpressions": [
+                        {
+                          "key": "workload",
+                          "operator": "In",
+                          "values": [
+                            "${TYPE_WORKLOAD}-executor"
+                          ]
+                        }
+                      ],
+                      "topologyKey": "topology.kubernetes.io/zone"
+                    }
+                  ]
                 }
+              },
+              "podAffinity": {
+                "requiredDuringSchedulingIgnoredDuringExecution": [
+                  {
+                    "labelSelector": {
+                      "matchExpressions": [
+                        {
+                          "key": "applicationId",
+                          "operator": "In",
+                          "values": [
+                            "example-low-${UUID}"
+                          ]
+                        }
+                      ]
+                    },
+                    "topologyKey": "topology.kubernetes.io/zone"
+                  }
+                ]
               }
+            }
           }
-        }]
+        ]
   executor:
     cores: 1
     instances: 2
     coreRequest: "850m"
-    memory: "2400m"
+    memory: "2300m"
     memoryOverhead: "500m"
     labels:
       version: 3.2.0

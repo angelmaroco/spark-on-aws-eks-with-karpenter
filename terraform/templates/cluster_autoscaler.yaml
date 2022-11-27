@@ -161,12 +161,12 @@ dnsPolicy: ClusterFirst
 # If `extraArgs.expander` contains `priority`, then expanderPriorities is used to define cluster-autoscaler-priority-expander priorities.
 # See: https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/expander/priority/readme.md
 expanderPriorities: |-
-  1:
-    - .*az1*.
-  10:
-    - .*az2*.
-  100:
-    - .*az3*.
+  50:
+    - .*az3.*
+  60:
+    - .*az2.*
+  70:
+    - .*az1.*
 
 # priorityConfigMapAnnotations -- Annotations to add to `cluster-autoscaler-priority-expander` ConfigMap.
 priorityConfigMapAnnotations: {}
@@ -188,7 +188,7 @@ extraArgs:
   # skip-nodes-with-local-storage: true
   expander: priority
   # scale-down-enabled: true
-  balance-similar-node-groups: true
+  balance-similar-node-groups: false
   # min-replica-count: 0
   # scale-down-utilization-threshold: 0.5
   # scale-down-non-empty-candidates-count: 30
