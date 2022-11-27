@@ -63,7 +63,7 @@ aws_baseline_eks = {
   worker_groups_spark_driver_low_cpu_instance_type        = ["m6a.large", "m5.large"]
   worker_groups_spark_driver_low_cpu_additional_userdata  = ""
   worker_groups_spark_driver_low_cpu_asg_desired_capacity = 0
-  worker_groups_spark_driver_low_cpu_asg_max_size         = 10
+  worker_groups_spark_driver_low_cpu_asg_max_size         = 1
   worker_groups_spark_driver_low_cpu_asg_min_size         = 0
   worker_groups_spark_driver_low_cpu_kubelet_extra_args   = "--node-labels=node.kubernetes.io/lifecycle=ondemand,workload=workload-low-cpu-driver"
   worker_groups_spark_driver_low_cpu_suspended_processes  = ["AZRebalance"]
@@ -72,10 +72,28 @@ aws_baseline_eks = {
   worker_groups_spark_executor_low_cpu_instance_type        = ["m6a.xlarge", "m5a.xlarge", "m5.xlarge"]
   worker_groups_spark_executor_low_cpu_additional_userdata  = ""
   worker_groups_spark_executor_low_cpu_asg_desired_capacity = 0
-  worker_groups_spark_executor_low_cpu_asg_max_size         = 10
+  worker_groups_spark_executor_low_cpu_asg_max_size         = 1
   worker_groups_spark_executor_low_cpu_asg_min_size         = 0
   worker_groups_spark_executor_low_cpu_kubelet_extra_args   = "--node-labels=node.kubernetes.io/lifecycle=spot,workload=workload-low-cpu-executor"
   worker_groups_spark_executor_low_cpu_suspended_processes  = ["AZRebalance"]
+
+  worker_groups_spark_driver_high_cpu_name                 = "spark-group-driver-workload-high-cpu-on-demand"
+  worker_groups_spark_driver_high_cpu_instance_type        = ["c5.large", "c5a.large", "c6a.large"]
+  worker_groups_spark_driver_high_cpu_additional_userdata  = ""
+  worker_groups_spark_driver_high_cpu_asg_desired_capacity = 0
+  worker_groups_spark_driver_high_cpu_asg_max_size         = 1
+  worker_groups_spark_driver_high_cpu_asg_min_size         = 0
+  worker_groups_spark_driver_high_cpu_kubelet_extra_args   = "--node-labels=node.kubernetes.io/lifecycle=ondemand,workload=workload-high-cpu-driver"
+  worker_groups_spark_driver_high_cpu_suspended_processes  = ["AZRebalance"]
+
+  worker_groups_spark_executor_high_cpu_name                 = "spark-group-executor-workload-high-cpu-on-spot"
+  worker_groups_spark_executor_high_cpu_instance_type        = ["c5.large", "c5a.large", "c6a.large"]
+  worker_groups_spark_executor_high_cpu_additional_userdata  = ""
+  worker_groups_spark_executor_high_cpu_asg_desired_capacity = 0
+  worker_groups_spark_executor_high_cpu_asg_max_size         = 1
+  worker_groups_spark_executor_high_cpu_asg_min_size         = 0
+  worker_groups_spark_executor_high_cpu_kubelet_extra_args   = "--node-labels=node.kubernetes.io/lifecycle=spot,workload=workload-high-cpu-executor"
+  worker_groups_spark_executor_high_cpu_suspended_processes  = ["AZRebalance"]
 
   worker_groups_jupyterhub_name                 = "jupyterhub-group-on-demand"
   worker_groups_jupyterhub_instance_type        = ["t3.medium", "t3a.medium"]

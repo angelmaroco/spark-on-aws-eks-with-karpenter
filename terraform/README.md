@@ -32,7 +32,7 @@
 | <a name="module_iam_assumable_role_karpenter"></a> [iam\_assumable\_role\_karpenter](#module\_iam\_assumable\_role\_karpenter) | terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc | 4.7.0 |
 | <a name="module_sg_eks_worker_group_all"></a> [sg\_eks\_worker\_group\_all](#module\_sg\_eks\_worker\_group\_all) | terraform-aws-modules/security-group/aws | 3.2.0 |
 | <a name="module_sg_eks_worker_group_on_demand"></a> [sg\_eks\_worker\_group\_on\_demand](#module\_sg\_eks\_worker\_group\_on\_demand) | terraform-aws-modules/security-group/aws | 3.2.0 |
-| <a name="module_sg_eks_worker_group_spark_low_cpu"></a> [sg\_eks\_worker\_group\_spark\_low\_cpu](#module\_sg\_eks\_worker\_group\_spark\_low\_cpu) | terraform-aws-modules/security-group/aws | 3.2.0 |
+| <a name="module_sg_eks_worker_group_spark"></a> [sg\_eks\_worker\_group\_spark](#module\_sg\_eks\_worker\_group\_spark) | terraform-aws-modules/security-group/aws | 3.2.0 |
 | <a name="module_sg_eks_worker_group_spot"></a> [sg\_eks\_worker\_group\_spot](#module\_sg\_eks\_worker\_group\_spot) | terraform-aws-modules/security-group/aws | 3.2.0 |
 
 ## Resources
