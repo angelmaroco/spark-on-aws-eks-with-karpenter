@@ -1,11 +1,11 @@
 apiVersion: "sparkoperator.k8s.io/v1beta2"
 kind: SparkApplication
 metadata:
-  name: example-spark-${UUID}
+  name: streaming-spark-${UUID}
   namespace: spark-apps
   labels:
     app: spark-jobs
-    applicationId: example-spark-${UUID}
+    applicationId: streaming-spark-${UUID}
     queue: "root.spark-apps"
 spec:
   sparkConf:
@@ -15,23 +15,22 @@ spec:
     "spark.io.encryption.enabled": "true"
     "spark.eventLog.enabled": "true"
     "spark.eventLog.dir": "s3a://${AWS_S3_BUCKET_SPARK_UI}/spark-ui"
-  type: Python
+    "spark.streaming.dynamicAllocation.enable": "true"
+    "spark.dynamicAllocation.shuffleTracking.enabled": "true"
+    "spark.dynamicAllocation.executorIdleTimeout": "60"
+    "spark.dynamicAllocation.schedulerBacklogTimeout": "60"
   dynamicAllocation:
     enabled: true
     initialExecutors: 1
     minExecutors: 2
     maxExecutors: 4
     shuffleTrackingTimeout: 120
+  type: Python
   pythonVersion: "3"
   mode: cluster
   image: "${AWS_ACCOUNT}.dkr.ecr.${AWS_REGION}.amazonaws.com/spark-custom:3.2.0"
   imagePullPolicy: IfNotPresent
-  mainApplicationFile: "s3a://${AWS_S3_BUCKET_SPARK_UI}/data/src/jobs/example-001-csv2parquet.py"
-  arguments:
-    [
-      "s3a://${AWS_S3_BUCKET_SPARK_UI}/data/files/dataset-example.csv",
-      "s3a://${AWS_S3_BUCKET_SPARK_UI}/output/dataset-example/",
-    ]
+  mainApplicationFile: "s3a://${AWS_S3_BUCKET_SPARK_UI}/data/src/jobs/example-002-streaming.py"
   sparkVersion: "3.2.0"
   volumes:
     - name: "spark-volume-testing-${UUID}"
@@ -127,7 +126,7 @@ spec:
                             "key": "applicationId",
                             "operator": "In",
                             "values": [
-                              "example-spark-${UUID}"
+                              "streaming-spark-${UUID}"
                             ]
                           }
                         ]
@@ -171,5 +170,5 @@ spec:
               - key: applicationId
                 operator: In
                 values:
-                - example-spark-${UUID}
+                - streaming-spark-${UUID}
             topologyKey: topology.kubernetes.io/zone

@@ -192,7 +192,7 @@ extraArgs:
   # min-replica-count: 0
   # scale-down-utilization-threshold: 0.5
   # scale-down-non-empty-candidates-count: 30
-  # max-node-provision-time: 15m0s
+  max-node-provision-time: 5m0s
   scan-interval: 10s
   scale-down-delay-after-add: 5m
   # scale-down-delay-after-delete: 0s
