@@ -78,6 +78,11 @@ locals {
       "key"                 = "workload"
       "propagate_at_launch" = "true"
       "value"               = "workload-low-cpu-driver"
+    },
+    {
+      "key"                 = "cluster-autoscaler.kubernetes.io/safe-to-evict"
+      "propagate_at_launch" = "true"
+      "value"               = "false"
     }
   ]
 
@@ -106,6 +111,11 @@ locals {
       "key"                 = "workload"
       "propagate_at_launch" = "true"
       "value"               = "workload-low-cpu-executor"
+    },
+    {
+      "key"                 = "cluster-autoscaler.kubernetes.io/safe-to-evict"
+      "propagate_at_launch" = "true"
+      "value"               = "false"
     }
   ]
 
@@ -134,6 +144,11 @@ locals {
       "key"                 = "workload"
       "propagate_at_launch" = "true"
       "value"               = "workload-high-cpu-driver"
+    },
+    {
+      "key"                 = "cluster-autoscaler.kubernetes.io/safe-to-evict"
+      "propagate_at_launch" = "true"
+      "value"               = "false"
     }
   ]
 
@@ -162,6 +177,77 @@ locals {
       "key"                 = "workload"
       "propagate_at_launch" = "true"
       "value"               = "workload-high-cpu-executor"
+    },
+    {
+      "key"                 = "cluster-autoscaler.kubernetes.io/safe-to-evict"
+      "propagate_at_launch" = "true"
+      "value"               = "false"
+    }
+  ]
+
+  worker_groups_spark_driver_stream_tags = [
+    {
+      "key"                 = "k8s.io/cluster-autoscaler/enabled"
+      "propagate_at_launch" = "true"
+      "value"               = "true"
+    },
+    {
+      "key"                 = "k8s.io/cluster-autoscaler/${local.name}"
+      "propagate_at_launch" = "true"
+      "value"               = "owned"
+    },
+    {
+      "key"                 = "node-type"
+      "propagate_at_launch" = "true"
+      "value"               = "spark"
+    },
+    {
+      "key"                 = "k8s.io/cluster-autoscaler/node-template/label/workload"
+      "propagate_at_launch" = "true"
+      "value"               = "workload-stream-driver"
+    },
+    {
+      "key"                 = "workload"
+      "propagate_at_launch" = "true"
+      "value"               = "workload-stream-driver"
+    },
+    {
+      "key"                 = "cluster-autoscaler.kubernetes.io/safe-to-evict"
+      "propagate_at_launch" = "true"
+      "value"               = "false"
+    }
+  ]
+
+  worker_groups_spark_executor_stream_tags = [
+    {
+      "key"                 = "k8s.io/cluster-autoscaler/enabled"
+      "propagate_at_launch" = "true"
+      "value"               = "true"
+    },
+    {
+      "key"                 = "k8s.io/cluster-autoscaler/${local.name}"
+      "propagate_at_launch" = "true"
+      "value"               = "owned"
+    },
+    {
+      "key"                 = "node-type"
+      "propagate_at_launch" = "true"
+      "value"               = "spark"
+    },
+    {
+      "key"                 = "k8s.io/cluster-autoscaler/node-template/label/workload"
+      "propagate_at_launch" = "true"
+      "value"               = "workload-stream-executor"
+    },
+    {
+      "key"                 = "workload"
+      "propagate_at_launch" = "true"
+      "value"               = "workload-stream-executor"
+    },
+    {
+      "key"                 = "cluster-autoscaler.kubernetes.io/safe-to-evict"
+      "propagate_at_launch" = "true"
+      "value"               = "false"
     }
   ]
 }
@@ -388,6 +474,32 @@ module "eks" {
       suspended_processes           = var.aws_baseline_eks.worker_groups_spark_executor_high_cpu_suspended_processes
       additional_security_group_ids = [module.sg_eks_worker_group_spark.this_security_group_id]
       tags                          = local.worker_groups_spark_executor_high_cpu_tags
+    },
+    {
+      name                          = "${var.aws_baseline_eks.worker_groups_spark_driver_stream_name}-${local.private_subnet_az1_name}"
+      subnets                       = local.private_subnet_az1_id
+      override_instance_types       = var.aws_baseline_eks.worker_groups_spark_driver_stream_instance_type
+      additional_userdata           = var.aws_baseline_eks.worker_groups_spark_driver_stream_additional_userdata
+      asg_desired_capacity          = var.aws_baseline_eks.worker_groups_spark_driver_stream_asg_desired_capacity
+      asg_max_size                  = var.aws_baseline_eks.worker_groups_spark_driver_stream_asg_max_size
+      asg_min_size                  = var.aws_baseline_eks.worker_groups_spark_driver_stream_asg_min_size
+      kubelet_extra_args            = var.aws_baseline_eks.worker_groups_spark_driver_stream_kubelet_extra_args
+      suspended_processes           = var.aws_baseline_eks.worker_groups_spark_driver_stream_suspended_processes
+      additional_security_group_ids = [module.sg_eks_worker_group_spark.this_security_group_id]
+      tags                          = local.worker_groups_spark_driver_stream_tags
+    },
+    {
+      name                          = "${var.aws_baseline_eks.worker_groups_spark_executor_stream_name}-${local.private_subnet_az1_name}"
+      subnets                       = local.private_subnet_az1_id
+      override_instance_types       = var.aws_baseline_eks.worker_groups_spark_executor_stream_instance_type
+      additional_userdata           = var.aws_baseline_eks.worker_groups_spark_executor_stream_additional_userdata
+      asg_desired_capacity          = var.aws_baseline_eks.worker_groups_spark_executor_stream_asg_desired_capacity
+      asg_max_size                  = var.aws_baseline_eks.worker_groups_spark_executor_stream_asg_max_size
+      asg_min_size                  = var.aws_baseline_eks.worker_groups_spark_executor_stream_asg_min_size
+      kubelet_extra_args            = var.aws_baseline_eks.worker_groups_spark_executor_stream_kubelet_extra_args
+      suspended_processes           = var.aws_baseline_eks.worker_groups_spark_executor_stream_suspended_processes
+      additional_security_group_ids = [module.sg_eks_worker_group_spark.this_security_group_id]
+      tags                          = local.worker_groups_spark_executor_stream_tags
     }
   ]
 
@@ -403,7 +515,7 @@ module "eks" {
 resource "aws_eks_addon" "aws_eks_addon_csi" {
   cluster_name      = module.eks.cluster_id
   addon_name        = "aws-ebs-csi-driver"
-  addon_version     = "v1.11.4-eksbuild.1"
+  addon_version     = "v1.14.0-eksbuild.1"
   resolve_conflicts = "OVERWRITE"
 
   depends_on = [
@@ -413,7 +525,7 @@ resource "aws_eks_addon" "aws_eks_addon_csi" {
 resource "aws_eks_addon" "aws_eks_addon_cni" {
   cluster_name      = module.eks.cluster_id
   addon_name        = "vpc-cni"
-  addon_version     = "v1.11.4-eksbuild.1"
+  addon_version     = "v1.12.0-eksbuild.1"
   resolve_conflicts = "OVERWRITE"
 
   depends_on = [

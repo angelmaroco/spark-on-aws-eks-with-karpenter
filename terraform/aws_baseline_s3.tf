@@ -47,3 +47,10 @@ resource "aws_s3_bucket_object" "python_example" {
   acl    = "private"
   source = "sources/spark/example-001-csv2parquet.py"
 }
+
+resource "aws_s3_bucket_object" "python_example_streaming" {
+  bucket = module.aws_baseline_s3_spark.bucket_id
+  key    = "${var.aws_baseline_s3_spark.spark_data_path}src/jobs/example-002-streaming.py"
+  acl    = "private"
+  source = "sources/spark/example-002-streaming.py"
+}
