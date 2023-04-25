@@ -46,12 +46,12 @@ The following image shows the high-level architecture on AWS with High Availabil
 ## **Details of components**
 
 * **Kubernetes**:
-  * Kubernetes EKS v1.24
+  * Kubernetes EKS v1.26
 * **Spark**:
   * Spark engine v3.2.0
   * Spark-operator v1.1.14
 * **Scheduling**:
-  * Yunikorn v1.1.0
+  * Yunikorn v1.2.0
 * **Scaling**:
   * Cluster autoscaler v9.21.0
   * Karpenter v0.16.3
