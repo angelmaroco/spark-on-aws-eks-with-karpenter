@@ -15,7 +15,7 @@ resource "helm_release" "yunikorn" {
   name             = "yunikorn"
   repository       = "https://apache.github.io/yunikorn-release"
   chart            = "yunikorn"
-  version          = "1.1.0"
+  version          = "1.2.0"
   timeout          = 300
 
   values = [data.local_file.helm_chart_yunikorn.content]

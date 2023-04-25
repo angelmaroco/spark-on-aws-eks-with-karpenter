@@ -17,23 +17,17 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 1
 imagePullSecrets:
-userLabelKey: "yunikorn.apache.org/username"
-operatorPlugins: "general,spark-k8s-operator"
 serviceAccount: yunikorn-admin
-hostNetwork: false
-
-placeHolderImage: k8s.gcr.io/pause
 
 image:
   repository: apache/yunikorn
-  tag: scheduler-1.1.0
+  tag: scheduler-1.2.0
   pullPolicy: Always
 
 pluginImage:
   repository: apache/yunikorn
-  tag: scheduler-plugin-1.1.0
+  tag: scheduler-plugin-1.2.0
   pullPolicy: Always
 
 nodeSelector: {}
@@ -48,17 +42,17 @@ affinity:
               values:
                 - core-scaling
 
+configuration: null    # deprecated; use queues.yaml in yunikornDefaults
+operatorPlugins: null  # deprecated; use service.operatorPlugins in yunikornDefaults
+placeHolderImage: null # deprecated; use service.placeholderImage in yunikornDefaults
+
 admissionController:
   image:
     repository: apache/yunikorn
-    tag: admission-1.1.0
+    tag: admission-1.2.0
     pullPolicy: Always
   replicaCount: 1
   serviceAccount: yunikorn-admission-controller
-  processNamespaces: "spark-apps"
-  bypassNamespaces: "^kube-system$"
-  labelNamespaces: ""
-  noLabelNamespaces: ""
   hostNetwork: true
   resources:
     requests:
@@ -80,11 +74,15 @@ admissionController:
                   - core-scaling
   service:
     type: ClusterIP
+  processNamespaces: null # deprecated; use admissionController.processNamespaces in yunikornDefaults
+  bypassNamespaces: null  # deprecated; use admissionController.bypassNamespaces in yunikornDefaults
+  labelNamespaces: null   # deprecated; use admissionController.labelNamespaces in yunikornDefaults
+  noLabelNamespaces: null # deprecated; use admissionController.noLabelNamespaces in yunikornDefaults
 
 web:
   image:
     repository: apache/yunikorn
-    tag: web-1.1.0
+    tag: web-1.2.0
     pullPolicy: Always
   resources:
     requests:
@@ -99,6 +97,16 @@ service:
   port: 9080
   portWeb: 9889
 
+ingress:
+  enabled: false
+  ingressClassName: ""
+  annotations: {}
+  hosts:
+    - host: chart-example.local
+      paths: []
+  pathType: Prefix
+  tls: []
+
 resources:
   requests:
     cpu: 200m
@@ -107,6 +115,34 @@ resources:
     cpu: 4
     memory: 6Gi
 
+# Bootstrap configuration for YuniKorn - will be rendered into yunikorn-defaults ConfigMap.
+# Any valid options for YuniKorn may be specified here.
+yunikornDefaults:
+  service.operatorPlugins: "general,spark-k8s-operator"
+  service.placeholderImage: "registry.k8s.io/pause:3.7"
+  admissionController.processNamespaces: "spark-apps"
+  admissionController.bypassNamespaces: "^kube-system$"
+  queues.yaml: |
+    partitions:
+      - name: default
+        placementrules:
+          - name: tag
+            value: namespace
+            create: true
+        queues:
+          - name: root
+            submitacl: '*'
+            properties:
+              application.sort.policy: fifo
+            queues:
+              - name: spark-apps
+                resources:
+                  guaranteed:
+                    memory: 300G
+                    vcore: 100
+                  max:
+                    memory: 3000G
+                    vcore: 1000
 
 # When this flag is true, the admission controller will be installed along with the scheduler.
 # When this flag is false, the admission controller will not be installed.
@@ -116,33 +152,3 @@ embedAdmissionController: true
 # When this flag is true, the scheduler will be deployed as Kubernetes scheduler plugin.
 # When this flag is false, the scheduler will be deployed as a standalone scheduler.
 enableSchedulerPlugin: true
-
-#
-# ------------------------------------------------------------------------
-# Please choose one configuration from following two for yunikorn
-# Use "CMD + /" to comment-out or uncomment a block before the deployment
-# ------------------------------------------------------------------------
-#
-
-# Use this configuration to automatically map K8s namespaces to yunikorn queues
-configuration: |
-  partitions:
-    - name: default
-      placementrules:
-        - name: tag
-          value: namespace
-          create: true
-      queues:
-        - name: root
-          submitacl: '*'
-          properties:
-            application.sort.policy: fifo
-          queues:
-            - name: spark-apps
-              resources:
-                guaranteed:
-                  memory: 300G
-                  vcore: 100
-                max:
-                  memory: 3000G
-                  vcore: 1000
