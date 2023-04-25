@@ -37,7 +37,7 @@ resource "helm_release" "grafana" {
   name       = "grafana"
   namespace  = kubernetes_namespace.monitoring.metadata.0.name
   repository = "https://grafana.github.io/helm-charts"
-  version    = "6.26.2"
+  version    = "6.55.0"
   timeout    = 300
 
   values = [data.local_file.helm_chart_grafana.content]
