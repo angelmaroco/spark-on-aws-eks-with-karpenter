@@ -293,6 +293,9 @@ module "eks" {
       kubelet_extra_args            = var.aws_baseline_eks.worker_groups_core_kubelet_extra_args
       suspended_processes           = var.aws_baseline_eks.worker_groups_core_suspended_processes
       additional_security_group_ids = [module.sg_eks_worker_group_on_demand.this_security_group_id]
+      root_volume_size              = 50
+      root_volume_type              = "gp3"
+      root_volume_throughput        = 300
       tags                          = local.worker_groups_core_tags
     },
     {
@@ -305,6 +308,9 @@ module "eks" {
       kubelet_extra_args            = var.aws_baseline_eks.worker_groups_core_scaling_kubelet_extra_args
       suspended_processes           = var.aws_baseline_eks.worker_groups_core_scaling_suspended_processes
       additional_security_group_ids = [module.sg_eks_worker_group_on_demand.this_security_group_id]
+      root_volume_size              = 50
+      root_volume_type              = "gp3"
+      root_volume_throughput        = 300
       tags                          = local.worker_groups_core_scaling_tags
     },
     {
@@ -317,6 +323,9 @@ module "eks" {
       kubelet_extra_args            = var.aws_baseline_eks.worker_groups_jupyterhub_kubelet_extra_args
       suspended_processes           = var.aws_baseline_eks.worker_groups_jupyterhub_suspended_processes
       additional_security_group_ids = [module.sg_eks_worker_group_spark.this_security_group_id]
+      root_volume_size              = 50
+      root_volume_type              = "gp3"
+      root_volume_throughput        = 300
       tags                          = local.worker_groups_core_jupyterhub_tags
     },
     {
@@ -330,6 +339,9 @@ module "eks" {
       kubelet_extra_args            = var.aws_baseline_eks.worker_groups_spark_driver_low_cpu_kubelet_extra_args
       suspended_processes           = var.aws_baseline_eks.worker_groups_spark_driver_low_cpu_suspended_processes
       additional_security_group_ids = [module.sg_eks_worker_group_spark.this_security_group_id]
+      root_volume_size              = 10
+      root_volume_type              = "gp3"
+      root_volume_throughput        = 300
       tags                          = local.worker_groups_spark_driver_low_cpu_tags
     },
     {
@@ -343,6 +355,9 @@ module "eks" {
       kubelet_extra_args            = var.aws_baseline_eks.worker_groups_spark_executor_low_cpu_kubelet_extra_args
       suspended_processes           = var.aws_baseline_eks.worker_groups_spark_executor_low_cpu_suspended_processes
       additional_security_group_ids = [module.sg_eks_worker_group_spark.this_security_group_id]
+      root_volume_size              = 10
+      root_volume_type              = "gp3"
+      root_volume_throughput        = 300
       tags                          = local.worker_groups_spark_executor_low_cpu_tags
     },
     {
@@ -515,7 +530,7 @@ module "eks" {
 resource "aws_eks_addon" "aws_eks_addon_csi" {
   cluster_name      = module.eks.cluster_id
   addon_name        = "aws-ebs-csi-driver"
-  addon_version     = "v1.17.0-eksbuild.1"
+  addon_version     = "v1.18.0-eksbuild.1"
   resolve_conflicts = "OVERWRITE"
 
   depends_on = [
@@ -531,6 +546,24 @@ resource "aws_eks_addon" "aws_eks_addon_cni" {
   depends_on = [
     module.eks
   ]
+}
+
+# Create the new wanted StorageClass and make it default
+resource "kubernetes_storage_class" "gp3-enc" {
+  metadata {
+    name = "gp3-enc"
+    annotations = {
+      "storageclass.kubernetes.io/is-default-class" = "true"
+    }
+  }
+  storage_provisioner    = "ebs.csi.aws.com"
+  volume_binding_mode    = "WaitForFirstConsumer"
+  allow_volume_expansion = true
+  parameters = {
+    "encrypted" = "true"
+    "fsType"    = "ext4"
+    "type"      = "gp3"
+  }
 }
 
 module "sg_eks_worker_group_on_demand" {

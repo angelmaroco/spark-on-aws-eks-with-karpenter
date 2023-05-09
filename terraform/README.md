@@ -87,6 +87,7 @@
 | [kubernetes_secret.grafana-secrets](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret) | resource |
 | [kubernetes_service_account.spark-service-account](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/service_account) | resource |
 | [kubernetes_service_account.spark-service-account-jupyter](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/service_account) | resource |
+| [kubernetes_storage_class.gp3-enc](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/storage_class) | resource |
 | [null_resource.build-and-push-ecr-jupyter](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [null_resource.build-and-push-ecr-spark](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [random_string.suffix](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) | resource |
