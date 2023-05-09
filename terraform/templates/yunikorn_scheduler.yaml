@@ -121,7 +121,7 @@ yunikornDefaults:
   service.operatorPlugins: "general,spark-k8s-operator"
   service.placeholderImage: "registry.k8s.io/pause:3.7"
   admissionController.processNamespaces: "spark-apps"
-  admissionController.bypassNamespaces: "^kube-system$"
+  admissionController.bypassNamespaces: "^kube-system$,^dragonfly-system$"
   queues.yaml: |
     partitions:
       - name: default
@@ -147,7 +147,7 @@ yunikornDefaults:
 # When this flag is true, the admission controller will be installed along with the scheduler.
 # When this flag is false, the admission controller will not be installed.
 # Once the admission controller is installed, all traffic will be routing to yunikorn.
-embedAdmissionController: true
+embedAdmissionController: false
 
 # When this flag is true, the scheduler will be deployed as Kubernetes scheduler plugin.
 # When this flag is false, the scheduler will be deployed as a standalone scheduler.
