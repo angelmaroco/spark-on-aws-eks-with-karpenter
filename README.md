@@ -327,27 +327,28 @@ operatorPlugins: "general,spark-k8s-operator"
 ![](/docs/images/yunikorn-front-queues.png)
 
 ```yaml
-configuration: |
-  partitions:
-    - name: default
-      placementrules:
-        - name: tag
-          value: namespace
-          create: true
-      queues:
-        - name: root
-          submitacl: '*'
-          properties:
-            application.sort.policy: fifo
-          queues:
-            - name: spark-apps
-              resources:
-                guaranteed:
-                  memory: 300G
-                  vcore: 100
-                max:
-                  memory: 3000G
-                  vcore: 1000
+yunikornDefaults:
+  queues.yaml: |
+    partitions:
+      - name: default
+        placementrules:
+          - name: tag
+            value: namespace
+            create: true
+        queues:
+          - name: root
+            submitacl: '*'
+            properties:
+              application.sort.policy: fifo
+            queues:
+              - name: spark-apps
+                resources:
+                  guaranteed:
+                    memory: 300G
+                    vcore: 100
+                  max:
+                    memory: 3000G
+                    vcore: 1000
 ```
 
 [More info about queues config](https://yunikorn.apache.org/docs/user_guide/queue_config)
