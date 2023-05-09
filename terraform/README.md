@@ -66,6 +66,7 @@
 | [helm_release.jupyterhub](https://registry.terraform.io/providers/hashicorp/helm/2.4.1/docs/resources/release) | resource |
 | [helm_release.karpenter](https://registry.terraform.io/providers/hashicorp/helm/2.4.1/docs/resources/release) | resource |
 | [helm_release.kubernetes-dashboard](https://registry.terraform.io/providers/hashicorp/helm/2.4.1/docs/resources/release) | resource |
+| [helm_release.nydus](https://registry.terraform.io/providers/hashicorp/helm/2.4.1/docs/resources/release) | resource |
 | [helm_release.prometheus](https://registry.terraform.io/providers/hashicorp/helm/2.4.1/docs/resources/release) | resource |
 | [helm_release.spark-operator](https://registry.terraform.io/providers/hashicorp/helm/2.4.1/docs/resources/release) | resource |
 | [helm_release.yunikorn](https://registry.terraform.io/providers/hashicorp/helm/2.4.1/docs/resources/release) | resource |
@@ -80,6 +81,7 @@
 | [kubernetes_namespace.jupyterhub](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
 | [kubernetes_namespace.karpenter](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
 | [kubernetes_namespace.monitoring](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
+| [kubernetes_namespace.nydus](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
 | [kubernetes_namespace.spark-apps](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
 | [kubernetes_namespace.spark-operator](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
 | [kubernetes_namespace.spark_users](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
@@ -112,6 +114,7 @@
 | [local_file.helm_chart_grafana](https://registry.terraform.io/providers/hashicorp/local/latest/docs/data-sources/file) | data source |
 | [local_file.helm_chart_jupyterhub](https://registry.terraform.io/providers/hashicorp/local/latest/docs/data-sources/file) | data source |
 | [local_file.helm_chart_karpenter](https://registry.terraform.io/providers/hashicorp/local/latest/docs/data-sources/file) | data source |
+| [local_file.helm_chart_nydus](https://registry.terraform.io/providers/hashicorp/local/latest/docs/data-sources/file) | data source |
 | [local_file.helm_chart_spark_history_server](https://registry.terraform.io/providers/hashicorp/local/latest/docs/data-sources/file) | data source |
 | [local_file.helm_chart_spark_operator](https://registry.terraform.io/providers/hashicorp/local/latest/docs/data-sources/file) | data source |
 | [local_file.helm_chart_yunikorn](https://registry.terraform.io/providers/hashicorp/local/latest/docs/data-sources/file) | data source |
