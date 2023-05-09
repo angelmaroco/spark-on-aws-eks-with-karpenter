@@ -60,6 +60,7 @@
 | [aws_security_group.non_default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
 | [helm_release.autoscaler](https://registry.terraform.io/providers/hashicorp/helm/2.4.1/docs/resources/release) | resource |
 | [helm_release.aws_node_termination_handler](https://registry.terraform.io/providers/hashicorp/helm/2.4.1/docs/resources/release) | resource |
+| [helm_release.dragonfly](https://registry.terraform.io/providers/hashicorp/helm/2.4.1/docs/resources/release) | resource |
 | [helm_release.gatekeeper](https://registry.terraform.io/providers/hashicorp/helm/2.4.1/docs/resources/release) | resource |
 | [helm_release.grafana](https://registry.terraform.io/providers/hashicorp/helm/2.4.1/docs/resources/release) | resource |
 | [helm_release.jupyterhub](https://registry.terraform.io/providers/hashicorp/helm/2.4.1/docs/resources/release) | resource |
@@ -74,6 +75,7 @@
 | [kubectl_manifest.karpenter_provisioner_jupyterhub_user_spark](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest) | resource |
 | [kubernetes_cluster_role_binding.spark-cluster-role-binding](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/cluster_role_binding) | resource |
 | [kubernetes_cluster_role_binding.spark-cluster-role-binding-jupyter](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/cluster_role_binding) | resource |
+| [kubernetes_namespace.dragonfly](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
 | [kubernetes_namespace.gatekeeper](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
 | [kubernetes_namespace.jupyterhub](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
 | [kubernetes_namespace.karpenter](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
@@ -104,6 +106,7 @@
 | [local_file.helm_chart_autoscaler](https://registry.terraform.io/providers/hashicorp/local/latest/docs/data-sources/file) | data source |
 | [local_file.helm_chart_aws_node_termination](https://registry.terraform.io/providers/hashicorp/local/latest/docs/data-sources/file) | data source |
 | [local_file.helm_chart_dashboard](https://registry.terraform.io/providers/hashicorp/local/latest/docs/data-sources/file) | data source |
+| [local_file.helm_chart_dragonfly](https://registry.terraform.io/providers/hashicorp/local/latest/docs/data-sources/file) | data source |
 | [local_file.helm_chart_gatekeeper](https://registry.terraform.io/providers/hashicorp/local/latest/docs/data-sources/file) | data source |
 | [local_file.helm_chart_grafana](https://registry.terraform.io/providers/hashicorp/local/latest/docs/data-sources/file) | data source |
 | [local_file.helm_chart_jupyterhub](https://registry.terraform.io/providers/hashicorp/local/latest/docs/data-sources/file) | data source |
